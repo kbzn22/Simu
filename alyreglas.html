@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+            vertical-align: top;
+        }
+        input, select, textarea {
+            padding: 5px;
+        }
+        input[type="number"] {
+            width: 100px;
+        }
+        textarea {
+            width: 300px;
+            height: 100px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #2196F3;
+        }
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .tab {
+            display: none;
+        }
+        .tab.active {
+            display: block;
+        }
+        .tab-buttons {
+            margin: 20px 0;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .test-result h3 {
+            margin-top: 0;
+        }
+        .critical-value {
+            font-weight: bold;
+        }
+        .conclusion {
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .passed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</h1>
+        
+        <div class="tab-buttons">
+            <button onclick="openTab('generation')" class="active">Generación</button>
+            <button onclick="openTab('testing')" class="secondary">Pruebas Estadísticas</button>
+        </div>
+        
+        <div id="generation" class="tab active">
+            <div class="input-group">
+                <label for="method">Método:</label>
+                <select id="method">
+                    <option value="middleSquare">Parte Central del Cuadrado</option>
+                    <option value="lehmer">Lehmer</option>
+                    <option value="mixedCongruential">Congruencial Mixto</option>
+                    <option value="multiplicativeCongruential">Congruencial Multiplicativo</option>
+                    <option value="additiveCongruential">Congruencial Aditivo</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="seed">Semilla (M):</label>
+                <input type="number" id="seed" min="1" value="1234">
+            </div>
+            
+            <div class="input-group">
+                <label for="digits">Número de dígitos (N):</label>
+                <input type="number" id="digits" min="1" max="10" value="4">
+            </div>
+            
+            <div class="input-group">
+                <label for="count">Cantidad de números:</label>
+                <input type="number" id="count" min="1" value="10">
+            </div>
+            
+            <button onclick="generateNumbers()">Generar Números</button>
+            
+            <table id="results">
+                <thead>
+                    <tr>
+                        <th>Iteración</th>
+                        <th>Número Generado</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+        
+        <div id="testing" class="tab">
+            <div class="input-group">
+                <label for="numbersInput">Números para probar (separados por comas):</label>
+                <textarea id="numbersInput" placeholder="Ejemplo: 0.123456, 0.654321, 0.987654"></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Opciones:</label>
+                <button onclick="useGeneratedNumbers()">Usar números generados</button>
+                <button onclick="clearNumbers()">Limpiar</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="testMethod">Prueba estadística:</label>
+                <select id="testMethod">
+                    <option value="mean">Prueba de los Promedios</option>
+                    <option value="frequency">Prueba de la Frecuencia</option>
+                    <option value="series">Prueba de la Serie</option>
+                    <option value="ks">Prueba de Kolmogorov-Smirnov</option>
+                    <option value="runs">Prueba de Corridas Arriba/Abajo de la Media</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="alpha">Nivel de significancia (α):</label>
+                <select id="alpha">
+                    <option value="0.01">0.01</option>
+                    <option value="0.05" selected>0.05</option>
+                    <option value="0.10">0.10</option>
+                </select>
+            </div>
+            
+            <button onclick="runTest()">Ejecutar Prueba</button>
+            
+            <div id="testResult" class="test-result"></div>
+        </div>
+    </div>
+
+    <script>
+        let generatedNumbers = [];
+        
+        function openTab(tabName) {
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        function generateNumbers() {
+            const method = document.getElementById("method").value;
+            const seed = parseInt(document.getElementById("seed").value);
+            const digits = parseInt(document.getElementById("digits").value);
+            const count = parseInt(document.getElementById("count").value);
+            
+            let results = [];
+            
+            switch (method) {
+                case "middleSquare":
+                    results = middleSquareMethod(seed, digits, count);
+                    break;
+                case "lehmer":
+                    results = lehmerMethod(seed, digits, count);
+                    break;
+                case "mixedCongruential":
+                    results = mixedCongruentialMethod(seed, count);
+                    break;
+                case "multiplicativeCongruential":
+                    results = multiplicativeCongruentialMethod(seed, count);
+                    break;
+                case "additiveCongruential":
+                    results = additiveCongruentialMethod(seed, count);
+                    break;
+                default:
+                    alert("Método no válido");
+                    return;
+            }
+            
+            generatedNumbers = results.slice();
+            displayResults(results);
+        }
+        
+        // Método de la Parte Central del Cuadrado
+        function middleSquareMethod(seed, digits, count) {
+            let results = [];
+            let current = seed;
+            
+            for (let i = 0; i < count; i++) {
+                const squared = current * current;
+                const squaredStr = squared.toString().padStart(digits * 2, '0');
+                const middle = squaredStr.substr(Math.floor((squaredStr.length - digits) / 2), digits);
+                
+                current = parseInt(middle);
+                const randomValue = current / Math.pow(10, digits);
+                
+                results.push(randomValue);
+            }
+            
+            return results;
+        }
+        
+        // Método de Lehmer
+        function lehmerMethod(seed, digits, count) {
+            let results = [];
+            let current = seed;
+            const m = Math.pow(10, digits);
+            const a = Math.pow(2, digits) + 1;
+            
+            for (let i = 0; i < count; i++) {
+                current = (a * current) % m;
+                const randomValue = current / m;
+                results.push(randomValue);
+            }
+            
+            return results;
+        }
+        
+        // Método Congruencial Mixto
+        function mixedCongruentialMethod(seed, count) {
+            let results = [];
+            let current = seed;
+            const a = 1664525;
+            const c = 1013904223;
+            const m = Math.pow(2, 32);
+            
+            for (let i = 0; i < count; i++) {
+                current = (a * current + c) % m;
+                const randomValue = current / m;
+                results.push(randomValue);
+            }
+            
+            return results;
+        }
+        
+        // Método Congruencial Multiplicativo
+        function multiplicativeCongruentialMethod(seed, count) {
+            let results = [];
+            let current = seed;
+            const a = 48271;
+            const m = Math.pow(2, 31) - 1;
+            
+            for (let i = 0; i < count; i++) {
+                current = (a * current) % m;
+                const randomValue = current / m;
+                results.push(randomValue);
+            }
+            
+            return results;
+        }
+        
+        // Método Congruencial Aditivo
+        function additiveCongruentialMethod(seed, count) {
+            let results = [];
+            let seq = [seed];
+            const m = Math.pow(2, 32);
+            
+            // Inicializar secuencia (usando Fibonacci-like)
+            for (let i = 1; i < 55; i++) {
+                seq.push((seq[i-1] + 1) % m); // Solo para ejemplo
+            }
+            
+            for (let i = 0; i < count; i++) {
+                const next = (seq[seq.length - 1] + seq[seq.length - 24]) % m;
+                seq.push(next);
+                const randomValue = next / m;
+                results.push(randomValue);
+            }
+            
+            return results;
+        }
+        
+        // Mostrar resultados en la tabla
+        function displayResults(results) {
+            const tbody = document.getElementById("resultsBody");
+            tbody.innerHTML = "";
+            
+            results.forEach((value, index) => {
+                const row = document.createElement("tr");
+                
+                const iterationCell = document.createElement("td");
+                iterationCell.textContent = index + 1;
+                
+                const valueCell = document.createElement("td");
+                valueCell.textContent = value.toFixed(6);
+                
+                row.appendChild(iterationCell);
+                row.appendChild(valueCell);
+                tbody.appendChild(row);
+            });
+        }
+        
+        function useGeneratedNumbers() {
+            if (generatedNumbers.length === 0) {
+                alert("No hay números generados para usar.");
+                return;
+            }
+            
+            const numbersStr = generatedNumbers.map(num => num.toFixed(6)).join(", ");
+            document.getElementById("numbersInput").value = numbersStr;
+        }
+        
+        function clearNumbers() {
+            document.getElementById("numbersInput").value = "";
+        }
+        
+        function parseInputNumbers() {
+            const input = document.getElementById("numbersInput").value;
+            if (!input.trim()) {
+                alert("Por favor ingrese números para probar.");
+                return null;
+            }
+            
+            const numbersStr = input.split(",");
+            const numbers = [];
+            
+            for (let str of numbersStr) {
+                const num = parseFloat(str.trim());
+                if (isNaN(num)) {
+                    alert(`Valor inválido encontrado: "${str}"`);
+                    return null;
+                }
+                if (num < 0 || num > 1) {
+                    alert(`Los números deben estar entre 0 y 1. Valor inválido: ${num}`);
+                    return null;
+                }
+                numbers.push(num);
+            }
+            
+            if (numbers.length < 5) {
+                alert("Se necesitan al menos 5 números para realizar pruebas estadísticas.");
+                return null;
+            }
+            
+            return numbers;
+        }
+        
+        function runTest() {
+            const numbers = parseInputNumbers();
+            if (!numbers) return;
+            
+            const testMethod = document.getElementById("testMethod").value;
+            const alpha = parseFloat(document.getElementById("alpha").value);
+            
+            let result;
+            
+            switch (testMethod) {
+                case "mean":
+                    result = meanTest(numbers, alpha);
+                    break;
+                case "frequency":
+                    result = frequencyTest(numbers, alpha);
+                    break;
+                case "series":
+                    result = seriesTest(numbers, alpha);
+                    break;
+                case "ks":
+                    result = kolmogorovSmirnovTest(numbers, alpha);
+                    break;
+                case "runs":
+                    result = runsAboveBelowMeanTest(numbers, alpha);
+                    break;
+                default:
+                    alert("Prueba no válida");
+                    return;
+            }
+            
+            displayTestResult(result);
+        }
+        
+        // Prueba de los Promedios
+        function meanTest(numbers, alpha) {
+            const n = numbers.length;
+            const mean = numbers.reduce((sum, num) => sum + num, 0) / n;
+            
+            // Valor esperado para una distribución uniforme (0,1) es 0.5
+            const expectedMean = 0.5;
+            
+            // Varianza teórica para una distribución uniforme (0,1) es 1/12
+            const variance = 1/12;
+            
+            // Error estándar de la media
+            const stdError = Math.sqrt(variance / n);
+            
+            // Estadístico Z
+            const z = (mean - expectedMean) / stdError;
+            
+            // Valor crítico Z (dos colas)
+            let criticalValue;
+            if (alpha === 0.01) criticalValue = 2.576;
+            else if (alpha === 0.05) criticalValue = 1.96;
+            else criticalValue = 1.645; // alpha = 0.10
+            
+            const passed = Math.abs(z) <= criticalValue;
+            
+            return {
+                testName: "Prueba de los Promedios",
+                n: n,
+                mean: mean,
+                expectedMean: expectedMean,
+                zValue: z,
+                criticalValue: criticalValue,
+                alpha: alpha,
+                passed: passed,
+                conclusion: passed ? 
+                    "Los números pasan la prueba de promedios (no hay evidencia para rechazar la hipótesis de uniformidad)" :
+                    "Los números NO pasan la prueba de promedios (se rechaza la hipótesis de uniformidad)"
+            };
+        }
+        
+        // Prueba de la Frecuencia (Chi-cuadrado)
+        function frequencyTest(numbers, alpha) {
+            const n = numbers.length;
+            const k = Math.floor(Math.sqrt(n)); // Número de intervalos (regla de Sturges simplificada)
+            const expected = n / k;
+            
+            // Crear intervalos
+            const intervalSize = 1 / k;
+            const observed = new Array(k).fill(0);
+            
+            for (const num of numbers) {
+                const index = Math.min(Math.floor(num / intervalSize), k - 1);
+                observed[index]++;
+            }
+            
+            // Calcular chi-cuadrado
+            let chiSquared = 0;
+            for (let i = 0; i < k; i++) {
+                chiSquared += Math.pow(observed[i] - expected, 2) / expected;
+            }
+            
+            // Grados de libertad
+            const df = k - 1;
+            
+            // Valores críticos aproximados para chi-cuadrado
+            let criticalValue;
+            if (alpha === 0.01) {
+                if (df === 4) criticalValue = 13.28;
+                else if (df === 5) criticalValue = 15.09;
+                else if (df === 6) criticalValue = 16.81;
+                else criticalValue = df + 3 * Math.sqrt(2 * df); // Aproximación para otros valores
+            } else if (alpha === 0.05) {
+                if (df === 4) criticalValue = 9.49;
+                else if (df === 5) criticalValue = 11.07;
+                else if (df === 6) criticalValue = 12.59;
+                else criticalValue = df + 2 * Math.sqrt(2 * df); // Aproximación para otros valores
+            } else { // alpha = 0.10
+                if (df === 4) criticalValue = 7.78;
+                else if (df === 5) criticalValue = 9.24;
+                else if (df === 6) criticalValue = 10.64;
+                else criticalValue = df + Math.sqrt(2 * df); // Aproximación para otros valores
+            }
+            
+            const passed = chiSquared <= criticalValue;
+            
+            return {
+                testName: "Prueba de la Frecuencia (Chi-cuadrado)",
+                n: n,
+                k: k,
+                chiSquared: chiSquared,
+                criticalValue: criticalValue,
+                alpha: alpha,
+                passed: passed,
+                conclusion: passed ?
+                    "Los números pasan la prueba de frecuencia (no hay evidencia para rechazar la hipótesis de uniformidad)" :
+                    "Los números NO pasan la prueba de frecuencia (se rechaza la hipótesis de uniformidad)"
+            };
+        }
+        
+        // Prueba de la Serie
+        function seriesTest(numbers, alpha) {
+            const n = numbers.length;
+            const k = Math.floor(Math.sqrt(n)); // Número de intervalos
+            
+            if (k < 2) {
+                return {
+                    testName: "Prueba de la Serie",
+                    error: "No hay suficientes números para realizar la prueba de serie. Se necesitan al menos 4 números."
+                };
+            }
+            
+            // Crear matriz de conteo k x k
+            const counts = Array.from({ length: k }, () => new Array(k).fill(0));
+            
+            // Asignar cada par consecutivo a un intervalo
+            for (let i = 0; i < n - 1; i += 2) {
+                const num1 = numbers[i];
+                const num2 = numbers[i + 1];
+                
+                const index1 = Math.min(Math.floor(num1 * k), k - 1);
+                const index2 = Math.min(Math.floor(num2 * k), k - 1);
+                
+                counts[index1][index2]++;
+            }
+            
+            // Calcular chi-cuadrado
+            const expected = (n / 2) / (k * k);
+            let chiSquared = 0;
+            
+            for (let i = 0; i < k; i++) {
+                for (let j = 0; j < k; j++) {
+                    chiSquared += Math.pow(counts[i][j] - expected, 2) / expected;
+                }
+            }
+            
+            // Grados de libertad
+            const df = k * k - 1;
+            
+            // Valores críticos aproximados para chi-cuadrado
+            let criticalValue;
+            if (alpha === 0.01) {
+                if (df === 3) criticalValue = 11.34;
+                else if (df === 8) criticalValue = 20.09;
+                else if (df === 15) criticalValue = 30.58;
+                else criticalValue = df + 3 * Math.sqrt(2 * df); // Aproximación para otros valores
+            } else if (alpha === 0.05) {
+                if (df === 3) criticalValue = 7.81;
+                else if (df === 8) criticalValue = 15.51;
+                else if (df === 15) criticalValue = 24.99;
+                else criticalValue = df + 2 * Math.sqrt(2 * df); // Aproximación para otros valores
+            } else { // alpha = 0.10
+                if (df === 3) criticalValue = 6.25;
+                else if (df === 8) criticalValue = 13.36;
+                else if (df === 15) criticalValue = 22.31;
+                else criticalValue = df + Math.sqrt(2 * df); // Aproximación para otros valores
+            }
+            
+            const passed = chiSquared <= criticalValue;
+            
+            return {
+                testName: "Prueba de la Serie",
+                n: n,
+                k: k,
+                chiSquared: chiSquared,
+                criticalValue: criticalValue,
+                alpha: alpha,
+                passed: passed,
+                conclusion: passed ?
+                    "Los números pasan la prueba de serie (no hay evidencia de correlación serial)" :
+                    "Los números NO pasan la prueba de serie (hay evidencia de correlación serial)"
+            };
+        }
+        
+        // Prueba de Kolmogorov-Smirnov
+        function kolmogorovSmirnovTest(numbers, alpha) {
+            const n = numbers.length;
+            const sorted = [...numbers].sort((a, b) => a - b);
+            
+            // Calcular D+ y D-
+            let dPlus = 0;
+            let dMinus = 0;
+            
+            for (let i = 0; i < n; i++) {
+                const expected = (i + 1) / n;
+                const diffPlus = expected - sorted[i];
+                const diffMinus = sorted[i] - i / n;
+                
+                if (diffPlus > dPlus) dPlus = diffPlus;
+                if (diffMinus > dMinus) dMinus = diffMinus;
+            }
+            
+            const d = Math.max(dPlus, dMinus);
+            
+            // Valores críticos para Kolmogorov-Smirnov
+            let criticalValue;
+            if (alpha === 0.01) {
+                criticalValue = 1.63 / Math.sqrt(n);
+            } else if (alpha === 0.05) {
+                criticalValue = 1.36 / Math.sqrt(n);
+            } else { // alpha = 0.10
+                criticalValue = 1.22 / Math.sqrt(n);
+            }
+            
+            const passed = d <= criticalValue;
+            
+            return {
+                testName: "Prueba de Kolmogorov-Smirnov",
+                n: n,
+                dPlus: dPlus,
+                dMinus: dMinus,
+                d: d,
+                criticalValue: criticalValue,
+                alpha: alpha,
+                passed: passed,
+                conclusion: passed ?
+                    "Los números pasan la prueba de Kolmogorov-Smirnov (no hay evidencia para rechazar la hipótesis de uniformidad)" :
+                    "Los números NO pasan la prueba de Kolmogorov-Smirnov (se rechaza la hipótesis de uniformidad)"
+            };
+        }
+        
+        // Prueba de Corridas Arriba/Abajo de la Media
+        function runsAboveBelowMeanTest(numbers, alpha) {
+            const n = numbers.length;
+            const mean = 0.5; // Para distribución uniforme (0,1)
+            
+            // Crear secuencia de '+' y '-'
+            let sequence = [];
+            for (const num of numbers) {
+                sequence.push(num >= mean ? '+' : '-');
+            }
+            
+            // Contar corridas
+            let runs = 1;
+            for (let i = 1; i < sequence.length; i++) {
+                if (sequence[i] !== sequence[i - 1]) {
+                    runs++;
+                }
+            }
+            
+            // Calcular valores esperados y varianza
+            const n1 = sequence.filter(s => s === '+').length;
+            const n2 = sequence.filter(s => s === '-').length;
+            
+            const expectedRuns = (2 * n1 * n2) / (n1 + n2) + 1;
+            const varianceRuns = (2 * n1 * n2 * (2 * n1 * n2 - n1 - n2)) / 
+                                (Math.pow(n1 + n2, 2) * (n1 + n2 - 1));
+            
+            // Estadístico Z
+            const z = (runs - expectedRuns) / Math.sqrt(varianceRuns);
+            
+            // Valor crítico Z (dos colas)
+            let criticalValue;
+            if (alpha === 0.01) criticalValue = 2.576;
+            else if (alpha === 0.05) criticalValue = 1.96;
+            else criticalValue = 1.645; // alpha = 0.10
+            
+            const passed = Math.abs(z) <= criticalValue;
+            
+            return {
+                testName: "Prueba de Corridas Arriba/Abajo de la Media",
+                n: n,
+                runs: runs,
+                expectedRuns: expectedRuns,
+                zValue: z,
+                criticalValue: criticalValue,
+                alpha: alpha,
+                passed: passed,
+                conclusion: passed ?
+                    "Los números pasan la prueba de corridas (no hay evidencia de patrones no aleatorios)" :
+                    "Los números NO pasan la prueba de corridas (hay evidencia de patrones no aleatorios)"
+            };
+        }
+        
+        function displayTestResult(result) {
+            const testResultDiv = document.getElementById("testResult");
+            testResultDiv.innerHTML = "";
+            
+            const title = document.createElement("h3");
+            title.textContent = result.testName;
+            testResultDiv.appendChild(title);
+            
+            if (result.error) {
+                const errorP = document.createElement("p");
+                errorP.style.color = "red";
+                errorP.textContent = result.error;
+                testResultDiv.appendChild(errorP);
+                return;
+            }
+            
+            const details = document.createElement("div");
+            
+            // Mostrar detalles específicos de cada prueba
+            if (result.testName === "Prueba de los Promedios") {
+                details.innerHTML = `
+                    <p>Número de muestras (n): ${result.n}</p>
+                    <p>Media observada: ${result.mean.toFixed(6)}</p>
+                    <p>Media esperada: ${result.expectedMean.toFixed(6)}</p>
+                    <p>Valor Z calculado: ${result.zValue.toFixed(6)}</p>
+                    <p>Valor crítico Z (α = ${result.alpha}): <span class="critical-value">±${result.criticalValue.toFixed(3)}</span></p>
+                `;
+            } else if (result.testName === "Prueba de la Frecuencia (Chi-cuadrado)") {
+                details.innerHTML = `
+                    <p>Número de muestras (n): ${result.n}</p>
+                    <p>Número de intervalos (k): ${result.k}</p>
+                    <p>Chi-cuadrado calculado: ${result.chiSquared.toFixed(6)}</p>
+                    <p>Valor crítico (α = ${result.alpha}, df = ${result.k - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
+                `;
+            } else if (result.testName === "Prueba de la Serie") {
+                details.innerHTML = `
+                    <p>Número de muestras (n): ${result.n}</p>
+                    <p>Número de intervalos (k): ${result.k}</p>
+                    <p>Chi-cuadrado calculado: ${result.chiSquared.toFixed(6)}</p>
+                    <p>Valor crítico (α = ${result.alpha}, df = ${result.k * result.k - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
+                `;
+            } else if (result.testName === "Prueba de Kolmogorov-Smirnov") {
+                details.innerHTML = `
+                    <p>Número de muestras (n): ${result.n}</p>
+                    <p>D+ = ${result.dPlus.toFixed(6)}</p>
+                    <p>D- = ${result.dMinus.toFixed(6)}</p>
+                    <p>D = max(D+, D-) = ${result.d.toFixed(6)}</p>
+                    <p>Valor crítico (α = ${result.alpha}): <span class="critical-value">${result.criticalValue.toFixed(6)}</span></p>
+                `;
+            } else if (result.testName === "Prueba de Corridas Arriba/Abajo de la Media") {
+                details.innerHTML = `
+                    <p>Número de muestras (n): ${result.n}</p>
+                    <p>Número de corridas observadas: ${result.runs}</p>
+                    <p>Número de corridas esperadas: ${result.expectedRuns.toFixed(6)}</p>
+                    <p>Valor Z calculado: ${result.zValue.toFixed(6)}</p>
+                    <p>Valor crítico Z (α = ${result.alpha}): <span class="critical-value">±${result.criticalValue.toFixed(3)}</span></p>
+                `;
+            }
+            
+            testResultDiv.appendChild(details);
+            
+            const conclusion = document.createElement("div");
+            conclusion.className = `conclusion ${result.passed ? 'passed' : 'failed'}`;
+            conclusion.textContent = result.conclusion;
+            testResultDiv.appendChild(conclusion);
+        }
+    </script>
+</body>
+</html>
