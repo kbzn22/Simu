@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./pseudoRandomNumerGenerators.js"></script>
     <title>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</title>
 </head>
 <body>
@@ -145,119 +146,6 @@
             
             generatedNumbers = results.slice();
             displayResults(results);
-        }
-        
-        //revisado
-        // Método de la Parte Central del Cuadrado
-        const middleSquareMethod = (seed, count) => {
-            let results = [];
-            let current = seed; //se inicializa la primera 'n', que seria n0
-            const digits = 3;
-        
-            for (let i = 0; i < count; i++) {
-                let squared = current*current; //eleva al cuadrado el número actual
-                let squaredStr = squared.toString(); //lo pasa a string
-            
-                if((squaredStr.length - digits)%2 !== 0){ //verifica si la diferencia es impar
-                    squared *= 10;
-                    squaredStr = squared.toString();
-                }
-            
-                const start = Math.floor((squaredStr.length - digits) / 2); //calcular el índice de inicio para cortar los dígitos del medio
-                const middleDigits = squaredStr.slice(start, start + digits); //corta los digitos del medio
-            
-                current = parseInt(middleDigits); //actualizar current, es decir el n
-                const randomValue = current / Math.pow(10, digits); // lo pasamos a número entre 0 y 1
-            
-                results.push(randomValue); //suma el numero generado al string results
-            
-            }
-        
-            console.log(results)
-            return results;
-        }
-
-        //revisado        
-        // Método de Lehmer
-        const lehmerMethod = (seed, count) => {
-            let results = [];
-            let current = seed; //se inicializa la primera 'n', que seria n0
-            const t = 76;
-            const k = t.toString().length;
-
-            for (let i = 0; i < count; i++) {
-                const product = current*t; //producto de ni por t
-                const productStr = product.toString();
-            
-                const firstSlice = productStr.slice(0, k);
-                const secondSlice = productStr.slice(k);
-
-                const first = parseInt(firstSlice);
-                const second = parseInt(secondSlice) || 0; // por si secondSlice es vacío
-            
-                current = Math.abs(second - first) //restarle los primeros k digitos del producto al resto de digitos del producto y actualizar current, es decir el n
-                const digits = current.toString().length;
-                const randomValue = current / Math.pow(10, digits); // lo pasamos a número entre 0 y 1
-            
-                results.push(randomValue); //suma el numero generado al string results
-            
-            }
-
-            return results;
-        }
-        
-        // Método Congruencial Mixto
-        function mixedCongruentialMethod(seed, count) {
-            let results = [];
-            let current = seed;
-            const a = 1664525;
-            const c = 1013904223;
-            const m = Math.pow(2, 32);
-            
-            for (let i = 0; i < count; i++) {
-                current = (a * current + c) % m;
-                const randomValue = current / m;
-                results.push(randomValue);
-            }
-            
-            return results;
-        }
-        
-        // Método Congruencial Multiplicativo
-        function multiplicativeCongruentialMethod(seed, count) {
-            let results = [];
-            let current = seed;
-            const a = 48271;
-            const m = Math.pow(2, 31) - 1;
-            
-            for (let i = 0; i < count; i++) {
-                current = (a * current) % m;
-                const randomValue = current / m;
-                results.push(randomValue);
-            }
-            
-            return results;
-        }
-        
-        // Método Congruencial Aditivo
-        function additiveCongruentialMethod(seed, count) {
-            let results = [];
-            let seq = [seed];
-            const m = Math.pow(2, 32);
-            
-            // Inicializar secuencia (usando Fibonacci-like)
-            for (let i = 1; i < 55; i++) {
-                seq.push((seq[i-1] + 1) % m); // Solo para ejemplo
-            }
-            
-            for (let i = 0; i < count; i++) {
-                const next = (seq[seq.length - 1] + seq[seq.length - 24]) % m;
-                seq.push(next);
-                const randomValue = next / m;
-                results.push(randomValue);
-            }
-            
-            return results;
         }
         
         // Mostrar resultados en la tabla
