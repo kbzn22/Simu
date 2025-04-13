@@ -1,0 +1,126 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+    background-color: #ebefba;
+}
+
+.container {
+    box-sizing: border-box;
+    max-width: 800px;
+    margin: 30px auto;
+    box-shadow: 0 0 20px 5px #0006;
+    border-radius: 20px;
+    padding: 4vh;
+    font-size: 16px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+
+label {
+    display: inline-block;
+    width: 200px;
+    vertical-align: top;
+}
+input, select, textarea {
+    padding: 5px;
+}
+input[type="number"] {
+    width: 100px;
+}
+textarea {
+    width: 300px;
+    height: 100px;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: #0007;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 1em;
+    border-radius: 12px;
+}
+
+.tab-buttons button {
+    background-color: #2196F3; /* color para botones inactivos */
+    transition: background-color 0.15s;
+}
+
+.tab-buttons button:hover {
+    background-color: #176eb5;
+}
+
+.tab-buttons button.active {
+    background-color: #4CAF50;
+    transition: background-color 0.3s;
+}
+
+.tab-buttons button.active:hover {
+    background-color: #3e9042;
+}
+
+button:hover {
+    background-color: #0009;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #f2f2f2;
+}
+.tab {
+    display: none;
+}
+.tab.active {
+    display: block;
+}
+.tab-buttons {
+    margin: 20px 0;
+}
+.test-result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+.test-result h3 {
+    margin-top: 0;
+}
+.critical-value {
+    font-weight: bold;
+}
+.conclusion {
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 3px;
+}
+.passed {
+    background-color: #d4edda;
+    color: #155724;
+}
+.failed {
+    background-color: #f8d7da;
+    color: #721c24;
+}

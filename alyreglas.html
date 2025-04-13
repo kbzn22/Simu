@@ -3,103 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
     <title>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: inline-block;
-            width: 200px;
-            vertical-align: top;
-        }
-        input, select, textarea {
-            padding: 5px;
-        }
-        input[type="number"] {
-            width: 100px;
-        }
-        textarea {
-            width: 300px;
-            height: 100px;
-        }
-        button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        button.secondary {
-            background-color: #2196F3;
-        }
-        button.secondary:hover {
-            background-color: #0b7dda;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .tab {
-            display: none;
-        }
-        .tab.active {
-            display: block;
-        }
-        .tab-buttons {
-            margin: 20px 0;
-        }
-        .test-result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .test-result h3 {
-            margin-top: 0;
-        }
-        .critical-value {
-            font-weight: bold;
-        }
-        .conclusion {
-            font-weight: bold;
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 3px;
-        }
-        .passed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .failed {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -123,7 +28,7 @@
             </div>
             
             <div class="input-group">
-                <label for="seed">Semilla (M):</label>
+                <label for="seed">Semilla (n0):</label>
                 <input type="number" id="seed" min="1" value="1234">
             </div>
             
@@ -137,7 +42,7 @@
                 <input type="number" id="count" min="1" value="10">
             </div>
             
-            <button onclick="generateNumbers()">Generar Números</button>
+            <button class="buttom" onclick="generateNumbers()">Generar Números</button>
             
             <table id="results">
                 <thead>
@@ -191,12 +96,22 @@
     <script>
         let generatedNumbers = [];
         
-        function openTab(tabName) {
-            const tabs = document.getElementsByClassName('tab');
+        //revisado
+        const openTab = (tabName) => {
+            const tabs = document.getElementsByClassName('tab'); //busca los divs con clase 'tab'
+            const buttons = document.querySelectorAll('.tab-buttons button');
+
             for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
+                tabs[i].classList.remove('active'); //oculta todos los tabs
             }
-            document.getElementById(tabName).classList.add('active');
+
+            buttons.forEach(btn => btn.classList.remove('active')); // quita la clase "active" de todos los botones
+
+            document.getElementById(tabName).classList.add('active'); //muestra el seleccionado
+
+             // Activar el botón correspondiente
+            const activeButton = document.querySelector(`.tab-buttons button[onclick="openTab('${tabName}')"]`);
+            if (activeButton) activeButton.classList.add('active');
         }
         
         function generateNumbers() {
@@ -209,10 +124,10 @@
             
             switch (method) {
                 case "middleSquare":
-                    results = middleSquareMethod(seed, digits, count);
+                    results = middleSquareMethod(seed, count);
                     break;
                 case "lehmer":
-                    results = lehmerMethod(seed, digits, count);
+                    results = lehmerMethod(seed, count);
                     break;
                 case "mixedCongruential":
                     results = mixedCongruentialMethod(seed, count);
@@ -232,38 +147,62 @@
             displayResults(results);
         }
         
+        //revisado
         // Método de la Parte Central del Cuadrado
-        function middleSquareMethod(seed, digits, count) {
+        const middleSquareMethod = (seed, count) => {
             let results = [];
-            let current = seed;
-            
+            let current = seed; //se inicializa la primera 'n', que seria n0
+            const digits = 3;
+        
             for (let i = 0; i < count; i++) {
-                const squared = current * current;
-                const squaredStr = squared.toString().padStart(digits * 2, '0');
-                const middle = squaredStr.substr(Math.floor((squaredStr.length - digits) / 2), digits);
-                
-                current = parseInt(middle);
-                const randomValue = current / Math.pow(10, digits);
-                
-                results.push(randomValue);
-            }
+                let squared = current*current; //eleva al cuadrado el número actual
+                let squaredStr = squared.toString(); //lo pasa a string
             
+                if((squaredStr.length - digits)%2 !== 0){ //verifica si la diferencia es impar
+                    squared *= 10;
+                    squaredStr = squared.toString();
+                }
+            
+                const start = Math.floor((squaredStr.length - digits) / 2); //calcular el índice de inicio para cortar los dígitos del medio
+                const middleDigits = squaredStr.slice(start, start + digits); //corta los digitos del medio
+            
+                current = parseInt(middleDigits); //actualizar current, es decir el n
+                const randomValue = current / Math.pow(10, digits); // lo pasamos a número entre 0 y 1
+            
+                results.push(randomValue); //suma el numero generado al string results
+            
+            }
+        
+            console.log(results)
             return results;
         }
-        
+
+        //revisado        
         // Método de Lehmer
-        function lehmerMethod(seed, digits, count) {
+        const lehmerMethod = (seed, count) => {
             let results = [];
-            let current = seed;
-            const m = Math.pow(10, digits);
-            const a = Math.pow(2, digits) + 1;
-            
+            let current = seed; //se inicializa la primera 'n', que seria n0
+            const t = 76;
+            const k = t.toString().length;
+
             for (let i = 0; i < count; i++) {
-                current = (a * current) % m;
-                const randomValue = current / m;
-                results.push(randomValue);
-            }
+                const product = current*t; //producto de ni por t
+                const productStr = product.toString();
             
+                const firstSlice = productStr.slice(0, k);
+                const secondSlice = productStr.slice(k);
+
+                const first = parseInt(firstSlice);
+                const second = parseInt(secondSlice) || 0; // por si secondSlice es vacío
+            
+                current = Math.abs(second - first) //restarle los primeros k digitos del producto al resto de digitos del producto y actualizar current, es decir el n
+                const digits = current.toString().length;
+                const randomValue = current / Math.pow(10, digits); // lo pasamos a número entre 0 y 1
+            
+                results.push(randomValue); //suma el numero generado al string results
+            
+            }
+
             return results;
         }
         
