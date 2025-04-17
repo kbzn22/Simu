@@ -13,7 +13,7 @@
         
         <div class="tab-buttons">
             <button onclick="openTab('generation')" class="active">Generación</button>
-            <button onclick="openTab('testing')" class="secondary">Pruebas Estadísticas</button>
+            <button onclick="openTab('testing')">Pruebas Estadísticas</button>
         </div>
         
         <div id="generation" class="tab active">
@@ -115,10 +115,10 @@
             if (activeButton) activeButton.classList.add('active');
         }
         
-        function generateNumbers() {
+        //revisado
+        const generateNumbers = () =>{
             const method = document.getElementById("method").value;
             const seed = parseInt(document.getElementById("seed").value);
-            const digits = parseInt(document.getElementById("digits").value);
             const count = parseInt(document.getElementById("count").value);
             
             let results = [];
@@ -224,7 +224,7 @@
             
             switch (testMethod) {
                 case "mean":
-                    result = meanTest(numbers, alpha);
+                    result = averagesTest(numbers, alpha);
                     break;
                 case "frequency":
                     result = frequencyTest(numbers, alpha);
@@ -246,36 +246,37 @@
             displayTestResult(result);
         }
         
+        //revisado
         // Prueba de los Promedios
-        function meanTest(numbers, alpha) {
+        const averagesTest = (numbers, alpha) => {
             const n = numbers.length;
-            const mean = numbers.reduce((sum, num) => sum + num, 0) / n;
-            
+            const numbersAverage = numbers.reduce((sum, num) => sum + num, 0) / n; //calcula el promedio de los numeros
+
             // Valor esperado para una distribución uniforme (0,1) es 0.5
-            const expectedMean = 0.5;
-            
+            const expectedAverage = 0.5;
+
             // Varianza teórica para una distribución uniforme (0,1) es 1/12
             const variance = 1/12;
-            
+
             // Error estándar de la media
             const stdError = Math.sqrt(variance / n);
-            
-            // Estadístico Z
-            const z = (mean - expectedMean) / stdError;
-            
+
+            // Estadístico Z, que mide cuán lejos está tu promedio del esperado (0.5), en función del error estándar.
+            const z = (numbersAverage - expectedAverage) / stdError;
+
             // Valor crítico Z (dos colas)
             let criticalValue;
             if (alpha === 0.01) criticalValue = 2.576;
             else if (alpha === 0.05) criticalValue = 1.96;
             else criticalValue = 1.645; // alpha = 0.10
-            
+
             const passed = Math.abs(z) <= criticalValue;
-            
+
             return {
                 testName: "Prueba de los Promedios",
                 n: n,
-                mean: mean,
-                expectedMean: expectedMean,
+                mean: numbersAverage,
+                expectedMean: expectedAverage,
                 zValue: z,
                 criticalValue: criticalValue,
                 alpha: alpha,
@@ -286,30 +287,32 @@
             };
         }
         
+        //revisado
         // Prueba de la Frecuencia (Chi-cuadrado)
-        function frequencyTest(numbers, alpha) {
-            const n = numbers.length;
-            const k = Math.floor(Math.sqrt(n)); // Número de intervalos (regla de Sturges simplificada)
-            const expected = n / k;
-            
-            // Crear intervalos
-            const intervalSize = 1 / k;
-            const observed = new Array(k).fill(0);
-            
-            for (const num of numbers) {
-                const index = Math.min(Math.floor(num / intervalSize), k - 1);
-                observed[index]++;
+        const frequencyTest = (numbers, alpha)=> {
+            const n = numbers.length; //tamano de la muestra
+            const k = Math.floor(Math.sqrt(n)); // número de intervalos (regla de Sturges simplificada)
+
+            const intervalSize = 1 / k; //se calcula el tamano de los intervalos
+        
+            const observedFrecuencies = new Array(k).fill(0); //Array de Frecuencias observadas, llenas con 0.
+        
+            for (const num of numbers) { //recorre todos los números generados.
+                const index = Math.min(Math.floor(num / intervalSize), k - 1); //calcula en qué intervalo cae dividiendo el número por el tamaño del intervalo y usa Math.floor() para obtener el índice del intervalo.
+                observedFrecuencies[index]++;
             }
-            
+
+            const expectedFrecuency = n / k; //se calcula la Frecuencia esperada
+        
             // Calcular chi-cuadrado
             let chiSquared = 0;
             for (let i = 0; i < k; i++) {
-                chiSquared += Math.pow(observed[i] - expected, 2) / expected;
+                chiSquared += Math.pow(observedFrecuencies[i] - expectedFrecuency, 2) / expectedFrecuency;
             }
-            
+
             // Grados de libertad
             const df = k - 1;
-            
+
             // Valores críticos aproximados para chi-cuadrado
             let criticalValue;
             if (alpha === 0.01) {
@@ -328,9 +331,9 @@
                 else if (df === 6) criticalValue = 10.64;
                 else criticalValue = df + Math.sqrt(2 * df); // Aproximación para otros valores
             }
-            
+
             const passed = chiSquared <= criticalValue;
-            
+
             return {
                 testName: "Prueba de la Frecuencia (Chi-cuadrado)",
                 n: n,

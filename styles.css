@@ -54,21 +54,23 @@ button {
 }
 
 .tab-buttons button {
-    background-color: #2196F3; /* color para botones inactivos */
+    background-color: #4CAF50; /* color para botones inactivos */
     transition: background-color 0.15s;
 }
 
 .tab-buttons button:hover {
-    background-color: #176eb5;
+    background-color: #2d4a2e;
 }
 
 .tab-buttons button.active {
-    background-color: #4CAF50;
+    background-color: #48764a;
     transition: background-color 0.3s;
+    font-weight: bold;
+    box-shadow: 0 0 10px 2px #0006;
 }
 
 .tab-buttons button.active:hover {
-    background-color: #3e9042;
+    background-color: #48764a;
 }
 
 button:hover {
