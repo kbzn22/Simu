@@ -348,45 +348,47 @@
             };
         }
         
+        //revisado
         // Prueba de la Serie
-        function seriesTest(numbers, alpha) {
+        const seriesTest = (numbers, alpha)=> {
             const n = numbers.length;
-            const k = Math.floor(Math.sqrt(n)); // Número de intervalos
-            
-            if (k < 2) {
+            const x = Math.floor(Math.sqrt(n - 1)); //se busca un valor de x apropiado
+   
+            if (x < 2) {
                 return {
                     testName: "Prueba de la Serie",
-                    error: "No hay suficientes números para realizar la prueba de serie. Se necesitan al menos 4 números."
+                    error: "No hay suficientes números para realizar la prueba de serie. Se necesitan al menos 4 pares de números."
                 };
             }
-            
-            // Crear matriz de conteo k x k
-            const counts = Array.from({ length: k }, () => new Array(k).fill(0));
-            
-            // Asignar cada par consecutivo a un intervalo
-            for (let i = 0; i < n - 1; i += 2) {
+
+            const expectedFrecuency = (n-1) / Math.pow(x, 2);
+        
+            // Crear matriz de frecuencias observadas de celdas x^2 
+            const observedFrecuencies = Array.from({ length: x }, () => new Array(x).fill(0));
+
+            // Armar los pares consecutivos y contar en que celda caen
+            for (let i = 0; i < n - 1; i ++) {
                 const num1 = numbers[i];
                 const num2 = numbers[i + 1];
-                
-                const index1 = Math.min(Math.floor(num1 * k), k - 1);
-                const index2 = Math.min(Math.floor(num2 * k), k - 1);
-                
-                counts[index1][index2]++;
+
+                const index1 = Math.min(Math.floor(num1 * x), x - 1); //obtiene el indice del intervalo de 0 a 1 en el que cae cada numero, el segundo valor es una proteccion en caso de que uno de los numeros sea justo 1.
+                const index2 = Math.min(Math.floor(num2 * x), x - 1);
+
+                observedFrecuencies[index1][index2]++;
             }
-            
+
             // Calcular chi-cuadrado
-            const expected = (n / 2) / (k * k);
             let chiSquared = 0;
-            
-            for (let i = 0; i < k; i++) {
-                for (let j = 0; j < k; j++) {
-                    chiSquared += Math.pow(counts[i][j] - expected, 2) / expected;
+
+            for (let i = 0; i < x; i++) {
+                for (let j = 0; j < x; j++) {
+                    chiSquared += Math.pow(observedFrecuencies[i][j] - expectedFrecuency, 2) / expectedFrecuency;
                 }
             }
-            
+        
             // Grados de libertad
-            const df = k * k - 1;
-            
+            const df = Math.pow(x, 2) - 1;
+
             // Valores críticos aproximados para chi-cuadrado
             let criticalValue;
             if (alpha === 0.01) {
@@ -405,13 +407,13 @@
                 else if (df === 15) criticalValue = 22.31;
                 else criticalValue = df + Math.sqrt(2 * df); // Aproximación para otros valores
             }
-            
+
             const passed = chiSquared <= criticalValue;
-            
+
             return {
                 testName: "Prueba de la Serie",
                 n: n,
-                k: k,
+                x: x,
                 chiSquared: chiSquared,
                 criticalValue: criticalValue,
                 alpha: alpha,
@@ -422,26 +424,21 @@
             };
         }
         
+        //revisado
         // Prueba de Kolmogorov-Smirnov
-        function kolmogorovSmirnovTest(numbers, alpha) {
-            const n = numbers.length;
-            const sorted = [...numbers].sort((a, b) => a - b);
-            
-            // Calcular D+ y D-
-            let dPlus = 0;
-            let dMinus = 0;
-            
-            for (let i = 0; i < n; i++) {
-                const expected = (i + 1) / n;
-                const diffPlus = expected - sorted[i];
-                const diffMinus = sorted[i] - i / n;
-                
-                if (diffPlus > dPlus) dPlus = diffPlus;
-                if (diffMinus > dMinus) dMinus = diffMinus;
-            }
-            
-            const d = Math.max(dPlus, dMinus);
-            
+        const kolmogorovSmirnovTest = (numbers, alpha)=> {
+            const n = numbers.length; //tamano de la muestra
+        
+            const sorted = [...numbers].sort((a, b) => a - b); //ordenar en forma ascendente la muestra
+
+            const Fn = sorted.map((x, i) => (i + 1) / n); //calcular la Distribucion Acumulada Fn(x)
+
+            const F = sorted.map(x => x); // F(x) = x en distribución uniforme
+        
+            const differences = Fn.map((fn, i) => Math.abs(fn - F[i])); //calcular las diferencias absolutas entre Fn y F
+        
+            const D = Math.max(...differences); //calcular la máxima diferencia D
+
             // Valores críticos para Kolmogorov-Smirnov
             let criticalValue;
             if (alpha === 0.01) {
@@ -451,15 +448,13 @@
             } else { // alpha = 0.10
                 criticalValue = 1.22 / Math.sqrt(n);
             }
-            
-            const passed = d <= criticalValue;
-            
+
+            const passed = D <= criticalValue;
+
             return {
                 testName: "Prueba de Kolmogorov-Smirnov",
                 n: n,
-                dPlus: dPlus,
-                dMinus: dMinus,
-                d: d,
+                D: D,
                 criticalValue: criticalValue,
                 alpha: alpha,
                 passed: passed,
@@ -559,16 +554,14 @@
             } else if (result.testName === "Prueba de la Serie") {
                 details.innerHTML = `
                     <p>Número de muestras (n): ${result.n}</p>
-                    <p>Número de intervalos (k): ${result.k}</p>
+                    <p>Número de intervalos (x): ${result.x}</p>
                     <p>Chi-cuadrado calculado: ${result.chiSquared.toFixed(6)}</p>
-                    <p>Valor crítico (α = ${result.alpha}, df = ${result.k * result.k - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
+                    <p>Valor crítico (α = ${result.alpha}, df = ${result.x * result.x - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
                 `;
             } else if (result.testName === "Prueba de Kolmogorov-Smirnov") {
                 details.innerHTML = `
                     <p>Número de muestras (n): ${result.n}</p>
-                    <p>D+ = ${result.dPlus.toFixed(6)}</p>
-                    <p>D- = ${result.dMinus.toFixed(6)}</p>
-                    <p>D = max(D+, D-) = ${result.d.toFixed(6)}</p>
+                    <p>D = ${result.D.toFixed(6)}</p>
                     <p>Valor crítico (α = ${result.alpha}): <span class="critical-value">${result.criticalValue.toFixed(6)}</span></p>
                 `;
             } else if (result.testName === "Prueba de Corridas Arriba/Abajo de la Media") {

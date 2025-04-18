@@ -97,3 +97,117 @@ const frequencyTest = (numbers, alpha)=> {
             "Los números NO pasan la prueba de frecuencia (se rechaza la hipótesis de uniformidad)"
     };
 }
+
+// Prueba de la Serie
+const seriesTest = (numbers, alpha)=> {
+    const n = numbers.length;
+    const x = Math.floor(Math.sqrt(n - 1)); //se busca un valor de x apropiado
+   
+    if (x < 2) {
+        return {
+            testName: "Prueba de la Serie",
+            error: "No hay suficientes números para realizar la prueba de serie. Se necesitan al menos 4 pares de números."
+        };
+    }
+    
+    const expectedFrecuency = (n-1) / Math.pow(x, 2);
+
+    // Crear matriz de frecuencias observadas de celdas x^2 
+    const observedFrecuencies = Array.from({ length: x }, () => new Array(x).fill(0));
+    
+    // Armar los pares consecutivos y contar en que celda caen
+    for (let i = 0; i < n - 1; i ++) {
+        const num1 = numbers[i];
+        const num2 = numbers[i + 1];
+        
+        const index1 = Math.min(Math.floor(num1 * x), x - 1); //obtiene el indice del intervalo de 0 a 1 en el que cae cada numero, el segundo valor es una proteccion en caso de que uno de los numeros sea justo 1.
+        const index2 = Math.min(Math.floor(num2 * x), x - 1);
+        
+        observedFrecuencies[index1][index2]++;
+    }
+    
+    // Calcular chi-cuadrado
+    let chiSquared = 0;
+    
+    for (let i = 0; i < x; i++) {
+        for (let j = 0; j < x; j++) {
+            chiSquared += Math.pow(observedFrecuencies[i][j] - expectedFrecuency, 2) / expectedFrecuency;
+        }
+    }
+
+    // Grados de libertad
+    const df = Math.pow(x, 2) - 1;
+    
+    // Valores críticos aproximados para chi-cuadrado
+    let criticalValue;
+    if (alpha === 0.01) {
+        if (df === 3) criticalValue = 11.34;
+        else if (df === 8) criticalValue = 20.09;
+        else if (df === 15) criticalValue = 30.58;
+        else criticalValue = df + 3 * Math.sqrt(2 * df); // Aproximación para otros valores
+    } else if (alpha === 0.05) {
+        if (df === 3) criticalValue = 7.81;
+        else if (df === 8) criticalValue = 15.51;
+        else if (df === 15) criticalValue = 24.99;
+        else criticalValue = df + 2 * Math.sqrt(2 * df); // Aproximación para otros valores
+    } else { // alpha = 0.10
+        if (df === 3) criticalValue = 6.25;
+        else if (df === 8) criticalValue = 13.36;
+        else if (df === 15) criticalValue = 22.31;
+        else criticalValue = df + Math.sqrt(2 * df); // Aproximación para otros valores
+    }
+    
+    const passed = chiSquared <= criticalValue;
+    
+    return {
+        testName: "Prueba de la Serie",
+        n: n,
+        x: x,
+        chiSquared: chiSquared,
+        criticalValue: criticalValue,
+        alpha: alpha,
+        passed: passed,
+        conclusion: passed ?
+            "Los números pasan la prueba de serie (no hay evidencia de correlación serial)" :
+            "Los números NO pasan la prueba de serie (hay evidencia de correlación serial)"
+    };
+}
+
+// Prueba de Kolmogorov-Smirnov
+const kolmogorovSmirnovTest = (numbers, alpha)=> {
+    const n = numbers.length; //tamano de la muestra
+
+    const sorted = [...numbers].sort((a, b) => a - b); //ordenar en forma ascendente la muestra
+    
+    const Fn = sorted.map((x, i) => (i + 1) / n); //calcular la Distribucion Acumulada Fn(x)
+    
+    const F = sorted.map(x => x); // F(x) = x en distribución uniforme
+
+    const differences = Fn.map((fn, i) => Math.abs(fn - F[i])); //calcular las diferencias absolutas entre Fn y F
+
+    const D = Math.max(...differences); //calcular la máxima diferencia D
+    
+    // Valores críticos para Kolmogorov-Smirnov
+    let criticalValue;
+    if (alpha === 0.01) {
+        criticalValue = 1.63 / Math.sqrt(n);
+    } else if (alpha === 0.05) {
+        criticalValue = 1.36 / Math.sqrt(n);
+    } else { // alpha = 0.10
+        criticalValue = 1.22 / Math.sqrt(n);
+    }
+    
+    const passed = D <= criticalValue;
+    
+    return {
+        testName: "Prueba de Kolmogorov-Smirnov",
+        n: n,
+        D: D,
+        criticalValue: criticalValue,
+        alpha: alpha,
+        passed: passed,
+        conclusion: passed ?
+            "Los números pasan la prueba de Kolmogorov-Smirnov (no hay evidencia para rechazar la hipótesis de uniformidad)" :
+            "Los números NO pasan la prueba de Kolmogorov-Smirnov (se rechaza la hipótesis de uniformidad)"
+    };
+}
