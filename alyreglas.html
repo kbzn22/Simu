@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
+    <script src="./controller.js"></script>
     <script src="./pseudoRandomNumerGenerators.js"></script>
     <script src="./statisticalTests.js"></script>
     <title>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</title>
@@ -13,8 +14,8 @@
         <h1>Generador de Números Pseudoaleatorios con Pruebas Estadísticas</h1>
         
         <div class="tab-buttons">
-            <button onclick="openTab('generation')" class="active">Generación</button>
-            <button onclick="openTab('testing')">Pruebas Estadísticas</button>
+            <button onclick="openTab('generation', this)" class="active">Generación</button>
+            <button onclick="openTab('testing', this)">Pruebas Estadísticas</button>
         </div>
         
         <div id="generation" class="tab active">
@@ -31,17 +32,12 @@
             
             <div class="input-group">
                 <label for="seed">Semilla (n0):</label>
-                <input type="number" id="seed" min="1" value="1234">
-            </div>
-            
-            <div class="input-group">
-                <label for="digits">Número de dígitos (N):</label>
-                <input type="number" id="digits" min="1" max="10" value="4">
+                <input type="number" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')" id="seed" min="1">
             </div>
             
             <div class="input-group">
                 <label for="count">Cantidad de números:</label>
-                <input type="number" id="count" min="1" value="10">
+                <input type="number" step="1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)" id="count" min="1" max="99" value="10">
             </div>
             
             <button class="buttom" onclick="generateNumbers()">Generar Números</button>
@@ -95,220 +91,5 @@
         </div>
     </div>
 
-    <script>
-        let generatedNumbers = [];
-        
-        //revisado
-        const openTab = (tabName) => {
-            const tabs = document.getElementsByClassName('tab'); //busca los divs con clase 'tab'
-            const buttons = document.querySelectorAll('.tab-buttons button');
-
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active'); //oculta todos los tabs
-            }
-
-            buttons.forEach(btn => btn.classList.remove('active')); // quita la clase "active" de todos los botones
-
-            document.getElementById(tabName).classList.add('active'); //muestra el seleccionado
-
-             // Activar el botón correspondiente
-            const activeButton = document.querySelector(`.tab-buttons button[onclick="openTab('${tabName}')"]`);
-            if (activeButton) activeButton.classList.add('active');
-        }
-        
-        //revisado
-        const generateNumbers = () =>{
-            const method = document.getElementById("method").value;
-            const seed = parseInt(document.getElementById("seed").value);
-            const count = parseInt(document.getElementById("count").value);
-            
-            let results = [];
-            
-            switch (method) {
-                case "middleSquare":
-                    results = middleSquareMethod(seed, count);
-                    break;
-                case "lehmer":
-                    results = lehmerMethod(seed, count);
-                    break;
-                case "mixedCongruential":
-                    results = mixedCongruentialMethod(seed, count);
-                    break;
-                case "multiplicativeCongruential":
-                    results = multiplicativeCongruentialMethod(seed, count);
-                    break;
-                case "additiveCongruential":
-                    results = additiveCongruentialMethod(seed, count);
-                    break;
-                default:
-                    alert("Método no válido");
-                    return;
-            }
-            
-            generatedNumbers = results.slice();
-            displayResults(results);
-        }
-        
-        // Mostrar resultados en la tabla
-        function displayResults(results) {
-            const tbody = document.getElementById("resultsBody");
-            tbody.innerHTML = "";
-            
-            results.forEach((value, index) => {
-                const row = document.createElement("tr");
-                
-                const iterationCell = document.createElement("td");
-                iterationCell.textContent = index + 1;
-                
-                const valueCell = document.createElement("td");
-                valueCell.textContent = value.toFixed(6);
-                
-                row.appendChild(iterationCell);
-                row.appendChild(valueCell);
-                tbody.appendChild(row);
-            });
-        }
-        
-        function useGeneratedNumbers() {
-            if (generatedNumbers.length === 0) {
-                alert("No hay números generados para usar.");
-                return;
-            }
-            
-            const numbersStr = generatedNumbers.map(num => num.toFixed(6)).join(", ");
-            document.getElementById("numbersInput").value = numbersStr;
-        }
-        
-        function clearNumbers() {
-            document.getElementById("numbersInput").value = "";
-        }
-        
-        function parseInputNumbers() {
-            const input = document.getElementById("numbersInput").value;
-            if (!input.trim()) {
-                alert("Por favor ingrese números para probar.");
-                return null;
-            }
-            
-            const numbersStr = input.split(",");
-            const numbers = [];
-            
-            for (let str of numbersStr) {
-                const num = parseFloat(str.trim());
-                if (isNaN(num)) {
-                    alert(`Valor inválido encontrado: "${str}"`);
-                    return null;
-                }
-                if (num < 0 || num > 1) {
-                    alert(`Los números deben estar entre 0 y 1. Valor inválido: ${num}`);
-                    return null;
-                }
-                numbers.push(num);
-            }
-            
-            if (numbers.length < 5) {
-                alert("Se necesitan al menos 5 números para realizar pruebas estadísticas.");
-                return null;
-            }
-            
-            return numbers;
-        }
-        
-        function runTest() {
-            const numbers = parseInputNumbers();
-            if (!numbers) return;
-            
-            const testMethod = document.getElementById("testMethod").value;
-            const alpha = parseFloat(document.getElementById("alpha").value);
-            
-            let result;
-            
-            switch (testMethod) {
-                case "mean":
-                    result = averagesTest(numbers, alpha);
-                    break;
-                case "frequency":
-                    result = frequencyTest(numbers, alpha);
-                    break;
-                case "series":
-                    result = seriesTest(numbers, alpha);
-                    break;
-                case "ks":
-                    result = kolmogorovSmirnovTest(numbers, alpha);
-                    break;
-                case "runs":
-                    result = runsAboveBelowMeanTest(numbers, alpha);
-                    break;
-                default:
-                    alert("Prueba no válida");
-                    return;
-            }
-            
-            displayTestResult(result);
-        }
-        
-        function displayTestResult(result) {
-            const testResultDiv = document.getElementById("testResult");
-            testResultDiv.innerHTML = "";
-            
-            const title = document.createElement("h3");
-            title.textContent = result.testName;
-            testResultDiv.appendChild(title);
-            
-            if (result.error) {
-                const errorP = document.createElement("p");
-                errorP.style.color = "red";
-                errorP.textContent = result.error;
-                testResultDiv.appendChild(errorP);
-                return;
-            }
-            
-            const details = document.createElement("div");
-            
-            // Mostrar detalles específicos de cada prueba
-            if (result.testName === "Prueba de los Promedios") {
-                details.innerHTML = `
-                    <p>Número de muestras (n): ${result.n}</p>
-                    <p>Media observada: ${result.mean.toFixed(6)}</p>
-                    <p>Media esperada: ${result.expectedMean.toFixed(6)}</p>
-                    <p>Valor Z calculado: ${result.zValue.toFixed(6)}</p>
-                    <p>Valor crítico Z (α = ${result.alpha}): <span class="critical-value">±${result.criticalValue.toFixed(3)}</span></p>
-                `;
-            } else if (result.testName === "Prueba de la Frecuencia (Chi-cuadrado)") {
-                details.innerHTML = `
-                    <p>Número de muestras (n): ${result.n}</p>
-                    <p>Número de intervalos (k): ${result.k}</p>
-                    <p>Chi-cuadrado calculado: ${result.chiSquared.toFixed(6)}</p>
-                    <p>Valor crítico (α = ${result.alpha}, df = ${result.k - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
-                `;
-            } else if (result.testName === "Prueba de la Serie") {
-                details.innerHTML = `
-                    <p>Número de muestras (n): ${result.n}</p>
-                    <p>Número de intervalos (x): ${result.x}</p>
-                    <p>Chi-cuadrado calculado: ${result.chiSquared.toFixed(6)}</p>
-                    <p>Valor crítico (α = ${result.alpha}, df = ${result.x * result.x - 1}): <span class="critical-value">${result.criticalValue.toFixed(3)}</span></p>
-                `;
-            } else if (result.testName === "Prueba de Kolmogorov-Smirnov") {
-                details.innerHTML = `
-                    <p>Número de muestras (n): ${result.n}</p>
-                    <p>D = ${result.D.toFixed(6)}</p>
-                    <p>Valor crítico (α = ${result.alpha}): <span class="critical-value">${result.criticalValue.toFixed(6)}</span></p>
-                `;
-            } else if (result.testName === "Prueba de Corridas Arriba/Abajo de la Media") {
-                details.innerHTML = `
-                    <p>Número de muestras (n): ${result.n}</p>
-                    <p>Valor Z calculado: ${result.chiSquared.toFixed(6)}</p>
-                    <p>Valor crítico Z (α = ${result.alpha}): <span class="critical-value">±${result.criticalValue.toFixed(3)}</span></p>
-                `;
-            }
-            
-            testResultDiv.appendChild(details);
-            
-            const conclusion = document.createElement("div");
-            conclusion.className = `conclusion ${result.passed ? 'passed' : 'failed'}`;
-            conclusion.textContent = result.conclusion;
-            testResultDiv.appendChild(conclusion);
-        }
-    </script>
 </body>
 </html>
