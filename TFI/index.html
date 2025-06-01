@@ -112,11 +112,11 @@
                         <!-- Earnings (Monthly) Card Example -->
                        <div class="" style="width: 50%; height: 1; display: flex; justify-content: center; align-items: center; padding-bottom: 40px;">
                             <div>
-                                <a href="#" class="btn btn-primary btn-user btn-block"
+                                <button onclick="iniciar()" href="#" class="btn btn-primary btn-user btn-block"
                                 style="font-size: 1.5rem; padding: 1rem 2rem;"
                                 >Simular 
                                     <i class="fas fa-arrow-right"></i>
-                                </a>
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -160,9 +160,9 @@
                         <div  class="col-xl-4 col-lg-5">
                             <div style="height: 90%;" class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Informe general</h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" id="informe">
                                     The styling for this basic card example is created by using default Bootstrap
                                     utility classes. By using utility classes, the style of the card component can be
                                     easily modified with no need for any custom CSS!
@@ -242,10 +242,7 @@
         <!-- End of Content Wrapper -->
 
 </div>
-
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
@@ -258,10 +255,13 @@
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
+</body>
+    <script src="js/simulador.js"></script>
+    <script src="js/distributions.js"></script>
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
     <script src="js/demo/chart-bar-demo.js"></script>
-
-</body>
+     <!-- Bootstrap core JavaScript-->
+    
 
 </html>

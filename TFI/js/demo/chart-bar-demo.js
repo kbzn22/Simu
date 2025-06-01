@@ -1,4 +1,6 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
+
+const renderBarra=()=>{
+
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
@@ -29,16 +31,20 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 
 // Bar Chart Example
 var ctx = document.getElementById("myBarChart");
+
+
+
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
     datasets: [{
-      label: "Revenue",
+      label: "Inversion",
       backgroundColor: "#4e73df",
       hoverBackgroundColor: "#2e59d9",
       borderColor: "#4e73df",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
+      data: arrayBarra,
+      maxBarThickness: 25,
     }],
   },
   options: {
@@ -63,12 +69,10 @@ var myBarChart = new Chart(ctx, {
         ticks: {
           maxTicksLimit: 6
         },
-        maxBarThickness: 25,
+        
       }],
       yAxes: [{
         ticks: {
-          min: 0,
-          max: 15000,
           maxTicksLimit: 5,
           padding: 10,
           // Include a dollar sign in the ticks
@@ -109,3 +113,4 @@ var myBarChart = new Chart(ctx, {
     },
   }
 });
+}

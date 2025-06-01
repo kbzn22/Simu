@@ -1,5 +1,7 @@
 
-
+function hola(){
+ alert("hola")
+}
 const expo = (alpha) => {
     var rng= rand();
   return - (1 / alpha) * Math.log(rng);
