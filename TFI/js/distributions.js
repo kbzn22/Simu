@@ -1,7 +1,7 @@
-
 function hola(){
  alert("hola")
 }
+
 const expo = (alpha) => {
     var rng= rand();
   return - (1 / alpha) * Math.log(rng);
@@ -35,6 +35,7 @@ const poisson=(a) =>{
 
     return k - 1;
 }
+
 const normal=(m,d)=>{
     var sum = 0;
     for (let i = 0; i < 12; i++) {
@@ -54,7 +55,6 @@ const rand = () => {
     }
   }
 };
-
 
 const mixedCongruentialMethod = (seed, count)=> {
     let results = [];
