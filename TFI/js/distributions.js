@@ -41,7 +41,7 @@ const normal=(m,d)=>{
     for (let i = 0; i < 12; i++) {
         sum += rand();
     }
-    return (sum - 6) * d + d; 
+    return (sum - 6) * d + m; 
 };
 
 

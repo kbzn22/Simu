@@ -30,6 +30,7 @@ const machoOHembra = (PT) => {
 
   for (let i = 0; i < PT; i++) {
     u = mixedCongruentialMethod((rand()*1000),1)[0];
+
     if(u<=0.5){
       PM_PH[0]++;
     } else {
@@ -39,6 +40,31 @@ const machoOHembra = (PT) => {
   }
 
   return PM_PH;
+}
+
+const supervivencia = (probDeSupervivencia, NH) => {
+  let i = 1;
+  let HS = 0;
+
+  while(i<=NH){
+    u = mixedCongruentialMethod((rand()*1000),1)[0];
+    
+    if(u<=probDeSupervivencia){
+      HS++;
+    }
+
+    i++;
+  }
+
+  return HS;
+}
+
+const actualizarArray = (n, array) => {
+  while(n>=1){
+    array[n-1] = array[n];
+    array [n] = 0;
+    n--;
+  }
 }
 
 const simular =(nroF,metodo)=>{
@@ -57,6 +83,7 @@ const simular =(nroF,metodo)=>{
     u = mixedCongruentialMethod((rand()*1000),1)[0];
     EE = 0.4 + 0.2*u;
   } else {
+
     if(metodo==='DR'){
       u = mixedCongruentialMethod((rand()*1000),1)[0];
       EE = 0.6 + 0.2*u;
@@ -68,6 +95,7 @@ const simular =(nroF,metodo)=>{
   picudosIniciales = picudosIniciales*EE; //EE: porcentaje de los picudos extinto
 
   PM_PH = machoOHembra(picudosIniciales);
+  PH = PM_PH[1]
 
   let m = 1;
   let TPM;
@@ -79,6 +107,58 @@ const simular =(nroF,metodo)=>{
 
     let PAM = 0;
     let d = 1;
+
+    while(d<=30){
+      let NH, HS;
+
+      if(HPM<=60){
+        NH = 5*PH;
+        HS = supervivencia(0.05, NH); //HS = huevos sobrevivientes
+      } else {
+
+        if(HPM<=70){
+          NH = 6*PH;
+          HS = supervivencia(0.2, NH);
+        } else {
+          NH = 7*PH;
+          HS = supervivencia(0.2, NH); 
+        }
+      }
+
+      if(TPM<=20){
+        huevos[31] = HS; //los huevos se guardan en la posicion 'n', tal que 'n' es el tiempo que les queda para madurar
+      } else {
+
+        if(TPM<=25){
+          huevos[18]+=HS;
+        } else {
+          
+          if(TPM<=30){
+            huevos[10]+=HS;
+          } else {
+            huevos[9]+=HS;
+          }
+        }
+      }
+
+      PM_PH = machoOHembra(huevos[0]); //nacimiento de picudos, asignacion de sexo
+
+      madurosMacho[42] = PM_PH[0];
+      madurosHembra[66] = PM_PH[1];
+      let madurosHoy = huevos[0];
+      let muertosHoy = madurosMacho[0] + madurosHembra[0];
+      PAM += madurosHoy - muertosHoy;
+
+      actualizarArray(42, madurosMacho);
+      actualizarArray(66, madurosHembra);
+      actualizarArray(31, huevos);
+
+      PH = picudosVivosHembra(madurosHembra);
+
+      d++;
+    }
+
+
 
     m++;
   }
