@@ -37,7 +37,7 @@ var ctx = document.getElementById("myBarChart");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    labels: ["Ingreso", "Inversion", "Rentabilidad"],
     datasets: [{
       label: "Inversion",
       backgroundColor: "#4e73df",

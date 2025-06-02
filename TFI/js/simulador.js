@@ -1,7 +1,13 @@
 var arrayLinea=[]; 
 var arrayBarra=[];
 var arrayTorta=[];
-var dataCard=[];
+var dataCard=[]; // data de la card informe general
+var dataNoviembre=[];
+var dataDiciembre=[];
+var dataEnero=[];
+var dataFebrero=[];
+var dataMarzo=[];
+var dataAbril=[];
 
 let temperaturaMeses = [[23.9, 6.2], [26.2, 6], [27.2, 6.1], [26.7, 5.7], [24.9, 5.6], [21.8, 5.5]];
 let humedadMeses     = [[65, 8], [65, 7], [64, 6], [66, 7], [69, 5], [72, 4]];
@@ -158,8 +164,6 @@ const simular =(nroF,metodo)=>{
       d++;
     }
 
-
-
     m++;
   }
 
@@ -168,6 +172,12 @@ const simular =(nroF,metodo)=>{
     arrayBarra=[100000,5000,3,4,5,6];
     arrayTorta=[65,35];
     dataCard=[76,79,90]
+    dataNoviembre=[];
+    dataDiciembre=[];
+    dataEnero=[];
+    dataFebrero=[];
+    dataMarzo=[];
+    dataAbril=[];
   */
 }
 
@@ -189,5 +199,35 @@ const setCard=()=>{
     <li>Promedio por cliente: $${dataCard[1]}</li>
   </ul>
 `;
-
 }
+
+    const dataMensual = {
+    'Noviembre': dataNoviembre,
+    'Diciembre': dataDiciembre,
+    'Enero': dataEnero,
+    'Febrero': dataFebrero,
+    'Marzo': dataMarzo,
+    'Abril': dataAbril,
+  };
+  const setCardMensual = (mes) => {
+    const dataCardM = dataMensual[mes];
+    if (!dataCardM) return;
+
+    document.getElementById("informeMensual").innerHTML = `
+      <h5>Informe del mes de ${mes}:</h5>
+      <ul>
+        <li>Dato 1: $${dataCardM[0]}</li>
+        <li>Dato 2: $${dataCardM[1]}</li>
+        <li>Dato 3: $${dataCardM[2]}</li>
+        <li>Dato 2: $${dataCardM[3]}</li>
+      </ul>
+    `;
+  };
+
+   document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', event => {
+      event.preventDefault();
+      const mes = item.getAttribute('data-mes');
+      setCardMensual(mes);
+    });
+  })
