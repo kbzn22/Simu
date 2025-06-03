@@ -2,17 +2,11 @@ var arrayLinea=[];
 var arrayBarra=[];
 var arrayTorta=[];
 var dataCard=[]; // data de la card informe general
-var dataNoviembre=[];
-var dataDiciembre=[];
-var dataEnero=[];
-var dataFebrero=[];
-var dataMarzo=[];
-var dataAbril=[];
+var dataMensual=[]; //KBZA, en data te puse objetos con la info que tenes que mostrar de cada mes, del indice 0 a 5
+var pam=[]; //este array de 0 a 5 es para el 1er grafico de barras
 
 let temperaturaMeses = [[23.9, 6.2], [26.2, 6], [27.2, 6.1], [26.7, 5.7], [24.9, 5.6], [21.8, 5.5]];
 let humedadMeses     = [[65, 8], [65, 7], [64, 6], [66, 7], [69, 5], [72, 4]];
-
-
 let madurosHembra = [];
 let madurosMacho = [];
 let huevos = [];
@@ -35,7 +29,7 @@ const machoOHembra = (PT) => {
   let PM_PH = [0,0]
 
   for (let i = 0; i < PT; i++) {
-    u = mixedCongruentialMethod((rand()*1000),1)[0];
+    u = rand();
 
     if(u<=0.5){
       PM_PH[0]++;
@@ -53,7 +47,7 @@ const supervivencia = (probDeSupervivencia, NH) => {
   let HS = 0;
 
   while(i<=NH){
-    u = mixedCongruentialMethod((rand()*1000),1)[0];
+    u = rand();
     
     if(u<=probDeSupervivencia){
       HS++;
@@ -68,30 +62,62 @@ const supervivencia = (probDeSupervivencia, NH) => {
 const actualizarArray = (n, array) => {
   while(n>=1){
     array[n-1] = array[n];
-    array [n] = 0;
     n--;
   }
+  array[n] = 0;
+}
+
+const picudosVivosHembra = () => {
+  let H = 0;
+  let i = 66;
+  while(i>=1){
+    H += madurosHembra[i];
+    i--;
+  }
+
+  return H;
+}
+
+const picudosVivosTotales = () => {
+  let PATC = 0;
+  let i = 66;
+
+  while(i>=1){
+    PATC += madurosHembra[i];
+    i--;
+  }
+
+  i = 42;
+
+  while(i>=1){
+    PATC += madurosMacho[i];
+    i--;
+  }
+
+  return PATC;
 }
 
 const simular =(nroF,metodo)=>{
 
-    // aca va toda la logica y hay que actualizar los array globales con los resultados
+  // aca va toda la logica y hay que actualizar los array globales con los resultados
 
   let EE;
   let u;
   let PM_PH = [];
+  data = [];
+  pam = [];
 
   llenarArrays();
 
   let picudosIniciales = 100;
 
   if(metodo==='TMP'){
-    u = mixedCongruentialMethod((rand()*1000),1)[0];
+    u = rand();
     EE = 0.4 + 0.2*u;
   } else {
 
     if(metodo==='DR'){
-      u = mixedCongruentialMethod((rand()*1000),1)[0];
+      u = rand();
       EE = 0.6 + 0.2*u;
     } else {
       EE = 1;
@@ -103,13 +129,12 @@ const simular =(nroF,metodo)=>{
   PM_PH = machoOHembra(picudosIniciales);
   PH = PM_PH[1]
 
+  const nombresMeses = ['Noviembre', 'Diciembre', 'Enero', 'Febrero', 'Marzo', 'Abril'];
   let m = 1;
-  let TPM;
-  let HPM;
 
   while(m<=6){
-    TPM = normal(temperaturaMeses[m-1][0],temperaturaMeses[m-1][1]);
-    HPM = normal(humedadMeses[m-1][0],humedadMeses[m-1][1]);
+    let TPM = normal(temperaturaMeses[m-1][0],temperaturaMeses[m-1][1]);
+    let HPM = normal(humedadMeses[m-1][0],humedadMeses[m-1][1]);
 
     let PAM = 0;
     let d = 1;
@@ -159,13 +184,25 @@ const simular =(nroF,metodo)=>{
       actualizarArray(66, madurosHembra);
       actualizarArray(31, huevos);
 
-      PH = picudosVivosHembra(madurosHembra);
+      PH = picudosVivosHembra();
 
       d++;
     }
 
+    pam[m-1] = PAM; //picudos adultos del mes
+    
+    dataMensual[m-1] = {
+      'mes': nombresMeses[m-1],
+      'temperaturaPromedioMes': TPM,
+      'humedadPromedioMes': HPM,
+      'picudosAdultosReproductivos': PAM
+    }
+
     m++;
   }
+
+  const PATC = picudosVivosTotales();
+
 
   /*
     arrayLinea=[3455, 4566, 6251, 7841, 9821, 16000]; 
