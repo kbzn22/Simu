@@ -1,4 +1,4 @@
-var arrayLinea=[]; 
+
 var arrayBarra=[];
 var arrayTorta=[];
 var dataCard=[]; // data de la card informe general
@@ -195,7 +195,7 @@ const simular =(nroF,metodo)=>{
       'mes': nombresMeses[m-1],
       'temperaturaPromedioMes': TPM,
       'humedadPromedioMes': HPM,
-      'picudosAdultosReproductivos': PAM
+      'picudosAdultosReproductivos': PAM //
     }
 
     m++;
@@ -237,26 +237,16 @@ const setCard=()=>{
   </ul>
 `;
 }
-
-    const dataMensual = {
-    'Noviembre': dataNoviembre,
-    'Diciembre': dataDiciembre,
-    'Enero': dataEnero,
-    'Febrero': dataFebrero,
-    'Marzo': dataMarzo,
-    'Abril': dataAbril,
-  };
   const setCardMensual = (mes) => {
-    const dataCardM = dataMensual[mes];
+    var dataCardM = dataMensual[mes];
     if (!dataCardM) return;
 
     document.getElementById("informeMensual").innerHTML = `
-      <h5>Informe del mes de ${mes}:</h5>
+      <h5>Informe del mes de ${dataCardM.mes}:</h5>
       <ul>
-        <li>Dato 1: $${dataCardM[0]}</li>
-        <li>Dato 2: $${dataCardM[1]}</li>
-        <li>Dato 3: $${dataCardM[2]}</li>
-        <li>Dato 2: $${dataCardM[3]}</li>
+        <li>Temperatura promedio: $${dataCardM.TPM}</li>
+        <li>Humedad promedio $${dataCardM.HPM}</li>
+        <li>Picudos adultos reproductivos $${dataCardM.PAM}</li>
       </ul>
     `;
   };
