@@ -5,6 +5,7 @@
     "scripts": {
         "start": "node_modules/.bin/gulp watch"
     },
+    
     "description": "An open source Bootstrap 4 admin theme.",
     "keywords": [
         "css",
@@ -51,4 +52,7 @@
         "gulp-uglify": "3.0.2",
         "merge-stream": "2.0.0"
     }
+ 
+  
 }
+
