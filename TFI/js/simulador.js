@@ -1,12 +1,11 @@
-
 var arrayBarra=[];
 var arrayTorta=[];
-var dataCard=[]; // data de la card informe general
+var dataCard; // data de la card informe general
 var dataMensual=[]; //KBZA, en data te puse objetos con la info que tenes que mostrar de cada mes, del indice 0 a 5
 var pam=[]; //este array de 0 a 5 es para el 1er grafico de barras
 
 let temperaturaMeses = [[23.9, 6.2], [26.2, 6], [27.2, 6.1], [26.7, 5.7], [24.9, 5.6], [21.8, 5.5]];
-let humedadMeses     = [[65, 8], [65, 7], [64, 6], [66, 7], [69, 5], [72, 4]];
+let humedadMeses = [[65, 8], [65, 7], [64, 6], [66, 7], [69, 5], [72, 4]];
 let madurosHembra = [];
 let madurosMacho = [];
 let huevos = [];
@@ -97,6 +96,29 @@ const picudosVivosTotales = () => {
   return PATC;
 }
 
+const perdidas = (picudosPorHectarea, AT) => {
+
+  let perdidaEstimada;
+
+  if (picudosPorHectarea <= 1000) {
+    perdidaEstimada = 0.02;
+  } else if (picudosPorHectarea <= 2000) {
+    perdidaEstimada = 0.05;
+  } else if (picudosPorHectarea <= 3000) {
+    perdidaEstimada = 0.10;
+  } else if (picudosPorHectarea <= 4000) {
+    perdidaEstimada = 0.15;
+  } else if (picudosPorHectarea <= 5000) {
+    perdidaEstimada = 0.20;
+  } else if (picudosPorHectarea <= 6000) { 
+    perdidaEstimada = 0.25;
+  } else {
+    perdidaEstimada = 0.30;
+  }
+
+  return AT * perdidaEstimada;
+}
+
 const simular =(nroF,metodo)=>{
 
   // aca va toda la logica y hay que actualizar los array globales con los resultados
@@ -104,23 +126,26 @@ const simular =(nroF,metodo)=>{
   let EE;
   let u;
   let PM_PH = [];
-  data = [];
   pam = [];
 
   llenarArrays();
 
   let picudosIniciales = 100;
+  let costoPrevencion;
 
   if(metodo==='TMP'){
     u = rand();
     EE = 0.4 + 0.2*u;
+    costoPrevencion = 26;
   } else {
 
     if(metodo==='DR'){
       u = rand();
       EE = 0.6 + 0.2*u;
+      costoPrevencion = 12;
     } else {
       EE = 1;
+      costoPrevencion = 0;
     }
   }
 
@@ -142,19 +167,16 @@ const simular =(nroF,metodo)=>{
     while(d<=30){
       let NH, HS;
 
-      if(HPM<=60){
-        NH = 5*PH;
-        HS = supervivencia(0.05, NH); //HS = huevos sobrevivientes
-      } else {
-
-        if(HPM<=70){
-          NH = 6*PH;
-          HS = supervivencia(0.2, NH);
-        } else {
-          NH = 7*PH;
-          HS = supervivencia(0.2, NH); 
-        }
-      }
+    if (HPM <= 60) {
+      NH = 5 * PH;
+      HS = supervivencia(0.05, NH); //HS = huevos sobrevivientes
+    } else if (HPM <= 70) {
+      NH = 6 * PH;
+      HS = supervivencia(0.2, NH);
+    } else {
+      NH = 7 * PH;
+      HS = supervivencia(0.2, NH);
+    }
 
       if(TPM<=20){
         huevos[31] = HS; //los huevos se guardan en la posicion 'n', tal que 'n' es el tiempo que les queda para madurar
@@ -202,20 +224,21 @@ const simular =(nroF,metodo)=>{
   }
 
   const PATC = picudosVivosTotales();
+  let efectividadFumigacion;
 
   if(nroF===0){
 
   } else {
     if(nroF<=2){
       u = rand();
-      efectividad = 0.6 + 0.1*u;
+      efectividadFumigacion = 0.6 + 0.1*u;
     } else {
       if(nroF<=4){
         u = rand();
-        efectividad = 0.8 + 0.1*u;
+        efectividadFumigacion = 0.8 + 0.1*u;
       } else {
         u = rand();
-        efectividad = 0.9 + 0.05*u;
+        efectividadFumigacion = 0.9 + 0.05*u;
       }
     }
   }
@@ -226,7 +249,7 @@ const simular =(nroF,metodo)=>{
 
   for (let i = 0; i < PATC; i++) {
     u = rand();
-    if(u>efectividad){
+    if(u>efectividadFumigacion){
       PATCS++;
     }
   }
@@ -245,21 +268,45 @@ const simular =(nroF,metodo)=>{
       algodonProducidoPlanta = normal(0.018, 0.004);
       AT+=algodonProducidoPlanta
     }
-    
   }
   
-  /*
-    arrayLinea=[3455, 4566, 6251, 7841, 9821, 16000]; 
-    arrayBarra=[100000,5000,3,4,5,6];
-    arrayTorta=[65,35];
-    dataCard=[76,79,90]
-    dataNoviembre=[];
-    dataDiciembre=[];
-    dataEnero=[];
-    dataFebrero=[];
-    dataMarzo=[];
-    dataAbril=[];
-  */
+  let picudosPorHectarea = PATCS/300;
+
+  let ATP = perdidas(picudosPorHectarea, AT);
+
+  const costoFijo = 72700;
+  const costoVariable = 954;
+  const ingresosTotales = 1300 * (AT-ATP)/1000; //pasamos a toneladas el algodon y multiplicamos por el precio por tonelada
+  const costoPerdidaPicudo = 1300 * ATP/1000;
+
+  arrayTorta[0] = ingresosTotales;
+  arrayTorta[1] = costoPerdidaPicudo; //que la torta diga 'Porcentaje de los ingresos perdidos por accion del picudo'
+
+  const costoTotal = costoFijo + (costoVariable + costoPrevencion + costoFumigacion)*300;
+  const beneficio = ingresosTotales - costoTotal;
+
+  arrayBarra[0] = ingresosTotales;
+  arrayBarra[1] = costoTotal;
+  arrayBarra[2] = beneficio; //que el 2do grafico de barras diga 'Magnitudes y relacion entre: Ingresos, Costos y Ganancias'
+
+  let rentabilidadMensaje;
+
+  if(beneficio>=0){
+    rentabilidadMensaje = "La estrategia de control es rentable";
+  } else {
+    rentabilidadMensaje = "La estrategia de control no es rentable";
+  }
+
+  dataCard = {
+    'picudosVivosTotalesFinales': PATCS,
+    'ingresosTotales': ingresosTotales,
+    'danoProvocado': costoPerdidaPicudo,
+    'costoMetodoPreventivo': costoPrevencion*300,
+    'costoFumigacion': costoFumigacion*300,
+    'costoTotal': costoTotal,
+    'beneficio': beneficio,
+    'rentabilidadMensaje': rentabilidadMensaje
+  }
 }
 
 const actualizar=()=>{
