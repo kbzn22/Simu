@@ -203,7 +203,51 @@ const simular =(nroF,metodo)=>{
 
   const PATC = picudosVivosTotales();
 
+  if(nroF===0){
 
+  } else {
+    if(nroF<=2){
+      u = rand();
+      efectividad = 0.6 + 0.1*u;
+    } else {
+      if(nroF<=4){
+        u = rand();
+        efectividad = 0.8 + 0.1*u;
+      } else {
+        u = rand();
+        efectividad = 0.9 + 0.05*u;
+      }
+    }
+  }
+
+  const costoFumigacion = nroF * 20;
+
+  let PATCS= 0;
+
+  for (let i = 0; i < PATC; i++) {
+    u = rand();
+    if(u>efectividad){
+      PATCS++;
+    }
+  }
+
+  let AT = 0;
+
+  for (let i = 0; i < 300; i++) { 
+    /*por cada hectarea se simula la cantidad de plantas,
+    y por cada planta se simula el algodon que produce*/
+    
+    u = rand();
+    let algodon = Math.floor(60000 + 60000*u) + 1;
+    let algodonProducidoPlanta;
+
+    for (let i = 0; i < algodon; i++) {
+      algodonProducidoPlanta = normal(0.018, 0.004);
+      AT+=algodonProducidoPlanta
+    }
+    
+  }
+  
   /*
     arrayLinea=[3455, 4566, 6251, 7841, 9821, 16000]; 
     arrayBarra=[100000,5000,3,4,5,6];
