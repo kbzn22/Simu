@@ -1,3 +1,5 @@
+var arrayLinea=[];
+var arrayBarra=[];
 var arrayTorta=[];
 var dataCard; // data de la card informe general
 var dataMensual=[]; //KBZA, en data te puse objetos con la info que tenes que mostrar de cada mes, del indice 0 a 5
