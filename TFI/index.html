@@ -24,10 +24,10 @@
 
 <body id="page-top" style="padding: 30px;">
 
-
+        
     <!-- Page Wrapper -->
     <div id="wrapper">
-
+        
         <!-- Sidebar -->
       
         <!-- End of Sidebar -->
@@ -37,7 +37,7 @@
 
             <!-- Main Content -->
             <div id="content">
-
+                
                 <!-- Topbar -->
                 
                 <!-- End of Topbar -->
@@ -92,12 +92,10 @@
                                             
                                             <select style="width: 250px;" class="form-control form-control-user" id="typeF">
                                                 <option value="">Eliga una medida preventiva</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                
+                                                <option value="TMP">Tubo mata picudo</option>
+                                                <option value="DR">Destruccion de rastrojos</option>
+                                                <option value="">Ninguna</option>
+
                                             </select>
                                         </div>
                                         <div class="col-auto">
@@ -135,16 +133,9 @@
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                           
                                         </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                                 <!-- Card Body -->
@@ -181,9 +172,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body" id="informeMensual">
-                                    The styling for this basic card example is created by using default Bootstrap
-                                    utility classes. By using utility classes, the style of the card component can be
-                                    easily modified with no need for any custom CSS!
+                                    Seleccione un mes
                                 </div>
                             </div>
                         </div>
@@ -195,7 +184,7 @@
                     <div class="col-xl-5 col-lg-7">
                                 <div class="card shadow mb-4">
                                     <div class="card-header py-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Rentabilidad</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-bar">
@@ -211,20 +200,13 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Ingresos/Egresos</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                   
                                         </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
+                                       
                                     </div>
                                 </div>
                                 <!-- Card Body -->
@@ -234,27 +216,23 @@
                                     </div>
                                     <div class="mt-4 text-center small">
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
+                                            <i class="fas fa-circle text-primary"></i> Ingresos
                                         </span>
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
+                                            <i class="fas fa-circle text-success"></i> Egresos
                                         </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
+                                    
                                     </div>
                                 </div>
                             </div>
                         </div>
-                            <div  class="col-xl-4 col-lg-5">
+                            <div  class="col-xl-4 col-lg-3">
                                 <div style="height: 90%;" class="card shadow mb-4">
                                     <div class="card-header py-3">
                                         <h6 class="m-0 font-weight-bold text-primary">Informe general</h6>
                                     </div>
                                 <div class="card-body" id="informe">
-                                    The styling for this basic card example is created by using default Bootstrap
-                                    utility classes. By using utility classes, the style of the card component can be
-                                    easily modified with no need for any custom CSS!
+                                  Esperando simulacion...
                                 </div>
                             </div>
                     </div>
@@ -286,6 +264,9 @@
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
+     <div id="overlay">
+  <div class="spinner">Espere un momento...</div>
+</div>
 </body>
     <script src="js/simulador.js"></script>
     <script src="js/distributions.js"></script>

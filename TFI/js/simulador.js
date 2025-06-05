@@ -1,4 +1,3 @@
-var arrayLinea=[];
 var arrayBarra=[];
 var arrayTorta=[];
 var dataCard; // data de la card informe general
@@ -7,31 +6,84 @@ var pam=[]; //este array de 0 a 5 es para el 1er grafico de barras
 
 let temperaturaMeses = [[23.9, 6.2], [26.2, 6], [27.2, 6.1], [26.7, 5.7], [24.9, 5.6], [21.8, 5.5]];
 let humedadMeses = [[65, 8], [65, 7], [64, 6], [66, 7], [69, 5], [72, 4]];
+const nombresMeses = ['Noviembre', 'Diciembre', 'Enero', 'Febrero', 'Marzo', 'Abril'];
 let madurosHembra = [];
 let madurosMacho = [];
 let huevos = [];
 
-const iniciar =()=>{
-    var nroF= document.getElementById("numberF").value;
-    var metodo= document.getElementById("typeF").value;
-    simular(nroF,metodo);
-    actualizar(); 
+const iniciar = async () => {
+  const nroF = document.getElementById("numberF").value;
+  const metodo = document.getElementById("typeF").value;
+
+  // Mostrar overlay
+  document.getElementById("overlay").style.display = "flex";
+
+  try {
+    await simular(nroF, metodo); // asegurate de que `simular` devuelva una Promise
+    actualizar();
+  } finally {
+    // Ocultar overlay, pase lo que pase
+    document.getElementById("overlay").style.display = "none";
+  }
+};
+
+const setCard=()=>{
+  document.getElementById("informe").innerHTML = `
+  <h5>Resumen de la simulación</h5>
+  <ul>
+    <li>Picudos vivos totales: ${(dataCard.picudosVivosTotalesFinales)}</li>
+    <li>Ingresos totales:  $${Math.round(dataCard.ingresosTotales)}</li>
+    <li>Perdidas provocadas: $${Math.round(dataCard.danoProvocado)}</li>
+    <li>Costos del metodo preventivo: $${Math.round(dataCard.costoMetodoPreventivo)}</li>
+    <li>Costos de fumigacion: $${Math.round(dataCard.costoFumigacion)}</li>
+    <li>Costo total: $${Math.round(dataCard.costoTotal)}</li>
+    <li>Utilidad: $${Math.round(dataCard.beneficio)}</li>
+  </ul>
+  <h6>Conclusion: ${dataCard.rentabilidadMensaje}<h6>
+`;
 }
+  const setCardMensual = (mes) => {
+    var dataCardM = dataMensual[mes];
+    if (!dataCardM) return;
+
+    document.getElementById("informeMensual").innerHTML = `
+      <h5>Informe del mes de ${dataCardM.mes}:</h5>
+      <ul>
+        <li>Temperatura promedio: ${Math.round(dataCardM.temperaturaPromedioMes)}</li>
+        <li>Humedad promedio ${Math.round(dataCardM.humedadPromedioMes)}</li>
+        <li>Picudos adultos reproductivos ${Math.round(dataCardM.picudosAdultosReproductivos)}</li>
+      </ul>
+    `;
+  };
+
+   document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', event => {
+      event.preventDefault();
+      const mes = item.getAttribute('data-mes');
+      setCardMensual(mes);
+    });
+  })
+function actualizar(){
+    renderLinea();
+    renderBarra();
+    renderTorta();
+    setCard();
+}
+
 
 const llenarArrays = () => {
-  for (let i = 0; i <= 66; i++) madurosHembra[i] = 0;
-  for (let i = 0; i <= 42; i++) madurosMacho[i] = 0;
-  for (let i = 0; i <= 31; i++) huevos[i] = 0;
+  madurosHembra = new Array(67).fill(0);
+  madurosMacho = new Array(43).fill(0);
+  huevos = new Array(32).fill(0);
+  
 }
-
+  
 const machoOHembra = (PT) => {
-  let u;
   let PM_PH = [0,0]
 
   for (let i = 0; i < PT; i++) {
-    u = rand();
-
-    if(u<=0.5){
+   
+    if(rand()<=0.5){
       PM_PH[0]++;
     } else {
       PM_PH[1]++;
@@ -41,38 +93,28 @@ const machoOHembra = (PT) => {
 
   return PM_PH;
 }
-
+  
 const supervivencia = (probDeSupervivencia, NH) => {
-  let i = 1;
   let HS = 0;
 
-  while(i<=NH){
-    u = rand();
-    
-    if(u<=probDeSupervivencia){
-      HS++;
-    }
-
-    i++;
+  for (let i = 0; i < NH; i++) {
+    if (rand() <= probDeSupervivencia) HS++;
   }
 
   return HS;
 }
-
+  
 const actualizarArray = (n, array) => {
-  while(n>=1){
-    array[n-1] = array[n];
-    n--;
-  }
+  array.copyWithin(0, 1, n+1);
   array[n] = 0;
 }
-
+  
 const picudosVivosHembra = () => {
   let H = 0;
-  let i = 66;
-  while(i>=1){
-    H += madurosHembra[i];
-    i--;
+  let madurosH = madurosHembra;
+
+  for (let i = 66; i >= 1; i--) {
+    H += madurosH[i];
   }
 
   return H;
@@ -117,99 +159,93 @@ const perdidas = (picudosPorHectarea, AT) => {
     perdidaEstimada = 0.30;
   }
 
-  return AT * perdidaEstimada;
+  return AT*perdidaEstimada;
 }
-
-const simular =(nroF,metodo)=>{
+  
+const simular =async(nroF,metodo)=>{
 
   // aca va toda la logica y hay que actualizar los array globales con los resultados
 
   let EE;
-  let u;
   let PM_PH = [];
-  pam = [];
 
   llenarArrays();
 
-  let picudosIniciales = 100;
+  let picudosIniciales = 70;
   let costoPrevencion;
 
   if(metodo==='TMP'){
-    u = rand();
-    EE = 0.4 + 0.2*u;
+    EE = 0.4 + 0.2*rand();
     costoPrevencion = 26;
   } else {
-
     if(metodo==='DR'){
-      u = rand();
-      EE = 0.6 + 0.2*u;
+      EE = 0.2 + 0.2*rand();
       costoPrevencion = 12;
     } else {
-      EE = 1;
+      EE = 0;
       costoPrevencion = 0;
     }
   }
+  let picudosInicialesSobrevivientes = 0;
 
-  picudosIniciales = picudosIniciales*EE; //EE: porcentaje de los picudos extinto
+  for (let i = 0; i < picudosIniciales; i++) {
+    if(rand()>EE){
+        picudosInicialesSobrevivientes++;
+    }  
+  }
 
-  PM_PH = machoOHembra(picudosIniciales);
-  PH = PM_PH[1]
+  PM_PH = machoOHembra(picudosInicialesSobrevivientes);
 
-  const nombresMeses = ['Noviembre', 'Diciembre', 'Enero', 'Febrero', 'Marzo', 'Abril'];
-  let m = 1;
+  let PH = PM_PH[1];
 
-  while(m<=6){
+  //arreglos auxiliares
+
+  const LIMITE_HUEVOS_EN_CELDA = 86000;
+
+  for (let m = 1; m <= 6; m++) {
+    if(PH<=3){ 
+      PH=5;
+    }
     let TPM = normal(temperaturaMeses[m-1][0],temperaturaMeses[m-1][1]);
     let HPM = normal(humedadMeses[m-1][0],humedadMeses[m-1][1]);
-
     let PAM = 0;
-    let d = 1;
 
-    while(d<=30){
+    let indiceHuevos;
+    if (TPM <= 20) indiceHuevos = 31;
+    else if (TPM <= 25) indiceHuevos = 18;
+    else if (TPM <= 30) indiceHuevos = 10;
+    else indiceHuevos = 9;
+    
+    for (let d = 1; d <= 30; d++){
       let NH, HS;
-
-    if (HPM <= 60) {
-      NH = 5 * PH;
-      HS = supervivencia(0.05, NH); //HS = huevos sobrevivientes
-    } else if (HPM <= 70) {
-      NH = 6 * PH;
-      HS = supervivencia(0.2, NH);
-    } else {
-      NH = 7 * PH;
-      HS = supervivencia(0.2, NH);
-    }
-
-      if(TPM<=20){
-        huevos[31] = HS; //los huevos se guardan en la posicion 'n', tal que 'n' es el tiempo que les queda para madurar
+      
+      if (HPM <= 60) {
+        NH = 5 * PH;
+        HS = supervivencia(0.05, NH); //HS = huevos sobrevivientes
+      } else if (HPM <= 70) {
+        NH = 6 * PH;
+        HS = supervivencia(0.2, NH);
       } else {
-
-        if(TPM<=25){
-          huevos[18]+=HS;
-        } else {
-          
-          if(TPM<=30){
-            huevos[10]+=HS;
-          } else {
-            huevos[9]+=HS;
-          }
-        }
+        NH = 7 * PH;
+        HS = supervivencia(0.5, NH);
+      }
+      
+      if (huevos[indiceHuevos] + HS <= LIMITE_HUEVOS_EN_CELDA) {
+        huevos[indiceHuevos] += HS;
+      } else {
+        huevos[indiceHuevos] = LIMITE_HUEVOS_EN_CELDA;
       }
 
       PM_PH = machoOHembra(huevos[0]); //nacimiento de picudos, asignacion de sexo
-
       madurosMacho[42] = PM_PH[0];
       madurosHembra[66] = PM_PH[1];
-      let madurosHoy = huevos[0];
-      let muertosHoy = madurosMacho[0] + madurosHembra[0];
-      PAM += madurosHoy - muertosHoy;
+      PAM += huevos[0] - (madurosMacho[0] + madurosHembra[0]);
 
+      actualizarArray(31, huevos);
       actualizarArray(42, madurosMacho);
       actualizarArray(66, madurosHembra);
-      actualizarArray(31, huevos);
-
       PH = picudosVivosHembra();
-
-      d++;
+    
     }
 
     pam[m-1] = PAM; //picudos adultos del mes
@@ -221,60 +257,94 @@ const simular =(nroF,metodo)=>{
       'picudosAdultosReproductivos': PAM //
     }
 
-    m++;
+    console.log(dataMensual[m-1]);
+
   }
 
+  console.log("fin");
+  console.log(pam);
+  
   const PATC = picudosVivosTotales();
-  let efectividadFumigacion;
 
+  let efectividadFumigacion = 0;
 
+  if(nroF > 0){
+    if(nroF <= 2){
+      efectividadFumigacion = 0.6 + 0.1 * rand();
+    } else if(nroF <= 4){
+      efectividadFumigacion = 0.8 + 0.1 * rand();
+    } else {
+      efectividadFumigacion = 0.9 + 0.05 * rand();
+    }
+  }
 
+  const costoFumigacion = nroF * 20;
 
-const actualizar=()=>{
+  let PATCS= 0;
+
+  for (let i = 0; i < PATC; i++) {
+    if(rand()>efectividadFumigacion){
+      PATCS++;
+    }
+  }
+
+  let AT = 0;
+  
+  for (let i = 0; i < 200; i++) { 
+    /*por cada hectarea se simula la cantidad de plantas,
+    y por cada planta se simula el algodon que produce*/
     
-    renderLinea();
-    renderBarra();
-    renderTorta();
-    setCard();
-    
-}
+    let algodon = Math.floor(60000 + 60000*rand()) + 1;
+    let algodonProducidoPlanta;
 
-const setCard=()=>{
-
-    document.getElementById("informe").innerHTML = `
-  <h5>Resumen de la simulación</h5>
-  <ul>
-    <li>Picudos vivos totales: $${dataCard.picudosVivosTotales}</li>
-    <li>Ingresos totales:  $${dataCard.ingresosTotales}</li>
-    <li>Perdidas provocadas: $${dataCard.danoProvocado}</li>
-    <li>Costos del metodo preventivo: $${dataCard.costoMetodoPreventivo}</li>
-    <li>Costos de fumigacion: $${dataCard.costoFumigacion}</li>
-    <li>Costo total: $${dataCard.costoTotal}</li>
-    <li>Utilidad: $${dataCard.beneficio}</li>
-  </ul>
+    for (let i = 0; i < algodon; i++) {
+      algodonProducidoPlanta = normal(0.018, 0.004);
+      AT+=algodonProducidoPlanta
+    }
+  }
  
-  <h6>Conclusion: $${datatcard.rentabilidadMensaje}<h6>
-`;
+  let picudosPorHectarea = PATCS/300;
+  
+  console.log("picudos por hectarea: "+picudosPorHectarea);
+  
+  let ATP = perdidas(picudosPorHectarea, AT);
+  
+
+  const costoFijo = 72700;
+  const costoVariable = 954;
+  const ingresosTotales = 1300 * (AT-ATP)/1000; //pasamos a toneladas el algodon y multiplicamos por el precio por tonelada
+  const costoPerdidaPicudo = 1300 * (ATP/1000);
+
+  arrayTorta[0] = ingresosTotales;
+  arrayTorta[1] = costoPerdidaPicudo; //que la torta diga 'Porcentaje de los ingresos perdidos por accion del picudo'
+  console.log(arrayTorta);
+
+  const costoTotal = costoFijo + (costoVariable + costoPrevencion + costoFumigacion)*300;
+  const beneficio = ingresosTotales - costoTotal;
+
+  arrayBarra[0] = ingresosTotales;
+  arrayBarra[1] = costoTotal;
+  arrayBarra[2] = beneficio; //que el 2do grafico de barras diga 'Magnitudes y relacion entre: Ingresos, Costos y Ganancias'
+  console.log(arrayBarra);
+
+  let rentabilidadMensaje;
+
+  if(beneficio>=0){
+    rentabilidadMensaje = "La estrategia de control es rentable";
+  } else {
+    rentabilidadMensaje = "La estrategia de control no es rentable";
+  }
+
+  dataCard = {
+    'picudosVivosTotalesFinales': PATCS,
+    'ingresosTotales': ingresosTotales,
+    'danoProvocado': costoPerdidaPicudo,
+    'costoMetodoPreventivo': costoPrevencion*300,
+    'costoFumigacion': costoFumigacion*300,
+    'costoTotal': costoTotal,
+    'beneficio': beneficio,
+    'rentabilidadMensaje': rentabilidadMensaje
+  }
+
+  console.log(dataCard);
 }
-  const setCardMensual = (mes) => {
-    var dataCardM = dataMensual[mes];
-    if (!dataCardM) return;
-
-    document.getElementById("informeMensual").innerHTML = `
-      <h5>Informe del mes de ${dataCardM.mes}:</h5>
-      <ul>
-        <li>Temperatura promedio: $${dataCardM.temperaturaPromedioMes}</li>
-        <li>Humedad promedio $${dataCardM.humedadPromedioMes}</li>
-        <li>Picudos adultos reproductivos $${dataCardM.picudosAdultosReproductivos}</li>
-      </ul>
-    `;
-  };
-
-   document.querySelectorAll('.dropdown-item').forEach(item => {
-    item.addEventListener('click', event => {
-      event.preventDefault();
-      const mes = item.getAttribute('data-mes');
-      setCardMensual(mes);
-    });
-  })
-};

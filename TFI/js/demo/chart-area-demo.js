@@ -40,7 +40,7 @@ var ctx = document.getElementById("myAreaChart").getContext("2d");
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
-    labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"],
+    labels: ["Noviembre", "Diciembre", "Enero", "Febrero", "Marzo", "Abril"],
     datasets: [{
       label: "Cantidad",
       lineTension: 0.3,

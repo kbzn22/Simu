@@ -1,41 +1,3 @@
-function hola(){
- alert("hola")
-}
-
-const expo = (alpha) => {
-    var rng= rand();
-  return - (1 / alpha) * Math.log(rng);
-};
-
-const uniform = (a, b) => {
-    var rng= rand();
-    return a + (b - a) * rng;
-};
-
-const binomial = (px) => {
-var rng= rand();
-  const sortedPx = [...px].sort((a, b) => a - b); 
-
-  for (let i = 0; i < sortedPx.length; i++) {
-    if (rng <= sortedPx[i]) {
-      return i;
-    }
-  }
-  return sortedPx.length - 1;
-};
-const poisson=(a) =>{
-    var L = Math.exp(-a);
-    var k = 0;
-    var p = 1;
-
-    do {
-        k++;
-        p *= Math.random();
-    } while (p > L);
-
-    return k - 1;
-}
-
 const normal=(m,d)=>{
     var sum = 0;
     for (let i = 0; i < 12; i++) {
@@ -46,16 +8,21 @@ const normal=(m,d)=>{
 
 
 const rand = () => {
-  while (true) {
-    var rng = Math.random() * 100;
-    var values = mixedCongruentialMethod(rng, 9);
-    var isRandom = frequencyTest(values, 0.95);
-    if (isRandom) {
-      return values[0];
-    }
-  }
+  
+ return Math.random();
 };
-
+/*
+const rand = () => {
+    while (true) {
+      var rng = Math.floor(Math.random() * Math.pow(2, 32));
+      var values = mixedCongruentialMethod(rng, 9);
+      var isRandom = frequencyTest(values, 0.95);
+      if (isRandom) {
+        return values[0];
+      }
+    }
+};
+*/
 const mixedCongruentialMethod = (seed, count)=> {
     let results = [];
     let current = seed; //se inicializa la primera 'n', que seria n0
