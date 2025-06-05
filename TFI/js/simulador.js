@@ -227,88 +227,8 @@ const simular =(nroF,metodo)=>{
   const PATC = picudosVivosTotales();
   let efectividadFumigacion;
 
-  if(nroF===0){
 
-  } else {
-    if(nroF<=2){
-      u = rand();
-      efectividadFumigacion = 0.6 + 0.1*u;
-    } else {
-      if(nroF<=4){
-        u = rand();
-        efectividadFumigacion = 0.8 + 0.1*u;
-      } else {
-        u = rand();
-        efectividadFumigacion = 0.9 + 0.05*u;
-      }
-    }
-  }
 
-  const costoFumigacion = nroF * 20;
-
-  let PATCS= 0;
-
-  for (let i = 0; i < PATC; i++) {
-    u = rand();
-    if(u>efectividadFumigacion){
-      PATCS++;
-    }
-  }
-
-  let AT = 0;
-
-  for (let i = 0; i < 300; i++) { 
-    /*por cada hectarea se simula la cantidad de plantas,
-    y por cada planta se simula el algodon que produce*/
-    
-    u = rand();
-    let algodon = Math.floor(60000 + 60000*u) + 1;
-    let algodonProducidoPlanta;
-
-    for (let i = 0; i < algodon; i++) {
-      algodonProducidoPlanta = normal(0.018, 0.004);
-      AT+=algodonProducidoPlanta
-    }
-  }
-  
-  let picudosPorHectarea = PATCS/300;
-
-  let ATP = perdidas(picudosPorHectarea, AT);
-
-  const costoFijo = 72700;
-  const costoVariable = 954;
-  const ingresosTotales = 1300 * (AT-ATP)/1000; //pasamos a toneladas el algodon y multiplicamos por el precio por tonelada
-  const costoPerdidaPicudo = 1300 * ATP/1000;
-
-  arrayTorta[0] = ingresosTotales;
-  arrayTorta[1] = costoPerdidaPicudo; //que la torta diga 'Porcentaje de los ingresos perdidos por accion del picudo'
-
-  const costoTotal = costoFijo + (costoVariable + costoPrevencion + costoFumigacion)*300;
-  const beneficio = ingresosTotales - costoTotal;
-
-  arrayBarra[0] = ingresosTotales;
-  arrayBarra[1] = costoTotal;
-  arrayBarra[2] = beneficio; //que el 2do grafico de barras diga 'Magnitudes y relacion entre: Ingresos, Costos y Ganancias'
-
-  let rentabilidadMensaje;
-
-  if(beneficio>=0){
-    rentabilidadMensaje = "La estrategia de control es rentable";
-  } else {
-    rentabilidadMensaje = "La estrategia de control no es rentable";
-  }
-
-  dataCard = {
-    'picudosVivosTotalesFinales': PATCS,
-    'ingresosTotales': ingresosTotales,
-    'danoProvocado': costoPerdidaPicudo,
-    'costoMetodoPreventivo': costoPrevencion*300,
-    'costoFumigacion': costoFumigacion*300,
-    'costoTotal': costoTotal,
-    'beneficio': beneficio,
-    'rentabilidadMensaje': rentabilidadMensaje
-  }
-}
 
 const actualizar=()=>{
     
@@ -357,3 +277,4 @@ const setCard=()=>{
       setCardMensual(mes);
     });
   })
+};
