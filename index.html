@@ -2,132 +2,190 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AgroSim - Inicio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgroSim - Simulador de Control del Picudo</title>
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --primary: #4e73df;
+      --secondary: #858796;
+      --light: #f8f9fc;
+      --dark: #5a5c69;
+      --info: #36b9cc;
     }
 
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-
-    main {
-      flex: 1;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
     }
 
     header {
-      background: linear-gradient(to right, #4e73df, #224abe);
+      background-color: var(--primary);
       color: white;
-      padding: 100px 20px;
+      padding: 2rem 1rem;
       text-align: center;
     }
 
     header h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      animation: slideInDown 1s ease-out;
+      margin: 0;
+      font-size: 2.5rem;
     }
 
     header p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: 0 auto 2rem;
-      animation: fadeIn 2s ease-in;
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+    }
+
+    .card h3 {
+      color: var(--primary);
+      margin-top: 0;
     }
 
     .btn {
-      padding: 1rem 2rem;
-      background-color: #1cc88a;
+      display: inline-block;
+      background-color: var(--info);
       color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      cursor: pointer;
+      padding: 0.75rem 1.5rem;
       text-decoration: none;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 5px;
+      font-size: 1rem;
+      margin: 2rem auto;
+      text-align: center;
     }
 
     .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      background-color: #2c9faf;
     }
 
-    section {
-      padding: 80px 20px;
-      background-color: #f8f9fc;
-      color: #343a40;
+    .btn-container {
       text-align: center;
     }
 
-    section h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    .client-section {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-top: 3rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     }
 
-    section p {
-      max-width: 800px;
-      margin: 0 auto;
-      font-size: 1.1rem;
-      line-height: 1.6;
+    .client-section h3 {
+      color: var(--primary);
+      margin-top: 1rem;
     }
 
-    .footer {
-      padding: 20px;
+    .client-section ul {
+      padding-left: 1.2rem;
+    }
+
+    footer {
       text-align: center;
-      background-color: #e2e6ea;
+      padding: 1rem;
+      margin-top: 4rem;
+      background-color: var(--light);
       font-size: 0.9rem;
-      color: #6c757d;
-    }
-
-    @keyframes slideInDown {
-      0% { opacity: 0; transform: translateY(-50px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      color: var(--secondary);
     }
 
     @media (max-width: 768px) {
-      header h1 {
-        font-size: 2.2rem;
-      }
-
-      header p,
-      section p {
-        font-size: 1rem;
+      .cards {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
 
-  <main>
-    <header>
-      <h1>Bienvenido a AgroSim</h1>
-      <p>Innovamos en tecnología para el agro. Simulá tu producción, analizá datos y tomá decisiones inteligentes para maximizar tus resultados.</p>
-      <a href="simulatorr.html" class="btn">Ir al simulador</a>
-    </header>
+  <header>
+    <h1>AgroSim</h1>
+    <p>Simulador para el control eficiente del picudo del algodonero</p>
+  </header>
 
+  <div class="container">
     <section>
-      <h2>¿Por qué usar AgroSim?</h2>
-      <p>
-        Nuestro simulador permite modelar escenarios productivos, gestionar recursos eficientemente y prever resultados. Está diseñado para ingenieros agrónomos, productores y cooperativas que buscan optimizar cada hectárea.
-        Incluye análisis de costos, proyecciones climáticas y cálculos de rentabilidad. Todo en una plataforma intuitiva y ágil.
+      <h2 class="section-title">¿Qué hace el simulador?</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Modelo Biológico</h3>
+          <p>Simula el crecimiento del picudo durante 6 meses, usando variables como clima y tasa reproductiva.</p>
+        </div>
+        <div class="card">
+          <h3>Estrategias Combinadas</h3>
+          <p>Evalúa combinaciones entre fumigación y medidas preventivas.</p>
+        </div>
+        <div class="card">
+          <h3>Impacto Económico</h3>
+          <p>Cuantifica pérdidas por infestación con un margen de error menor al 10% respecto a datos teóricos.</p>
+        </div>
+        <div class="card">
+          <h3>Fácil de Usar</h3>
+          <p>Diseñado para que cualquier usuario pueda simular y obtener resultados en menos de 30 minutos.</p>
+        </div>
+      </div>
+
+      <div class="btn-container">
+        <a href="simulator.html" class="btn">Ir al simulador</a>
+      </div>
+    </section>
+
+    <section class="client-section">
+      <h2 class="section-title">Sobre nuestro cliente</h2>
+      <p><strong>Buyatti S.A.I.C.A.</strong> es una empresa familiar agroindustrial del norte santafesino con casi 70 años de trayectoria en la industria oleaginosa argentina. De capital nacional, está comprometida con sus accionistas, empleados, clientes y la comunidad.</p>
+
+      <p>La compañía cuenta con plantas industriales estratégicamente ubicadas en el <strong>Parque Industrial Reconquista</strong>, <strong>Puerto General San Martín</strong> (Santa Fe) y en <strong>Las Breñas</strong> (Chaco). Desde allí abastece tanto al mercado interno argentino como a destinos de exportación en distintos países.</p>
+
+      <h3>Misión</h3>
+      <p>Ser una empresa familiar agroindustrial comprometida con sus accionistas, empleados, clientes y comunidad, produciendo con eficiencia y calidad.</p>
+
+      <h3>Visión</h3>
+      <p>Convertirse en una empresa reconocida dentro del sector agroindustrial, referente en calidad y confiabilidad, guiada por un espíritu emprendedor y con foco en el crecimiento continuo y diversificado.</p>
+
+      <h3>Valores</h3>
+      <ul>
+        <li>Compromiso social</li>
+        <li>Ética en las acciones</li>
+        <li>Espíritu emprendedor</li>
+        <li>Trabajo y eficiencia</li>
+        <li>Calidez humana</li>
+      </ul>
+
+      <p style="margin-top: 1rem;">
+        <a href="https://buyatti.com.ar/sobre-nosotros/" target="_blank" style="color: var(--info); text-decoration: underline;">
+          Conocé más sobre Buyatti S.A.I.C.A.
+        </a>
       </p>
     </section>
-  </main>
+  </div>
 
-  <footer class="footer">
-    &copy; 2025 AgroSim - Todos los derechos reservados
+  <footer>
+    &copy; 2025 AgroSim. Todos los derechos reservados.
   </footer>
 
 </body>
