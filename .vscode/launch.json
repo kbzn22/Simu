@@ -4,13 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Open index.html",
-            "file": "c:\\Users\\lizar\\Desktop\\UTN\\4 ano\\Simulacion\\Simu\\index.html",
-            "runtimeExecutable": "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-        }
-    ]
+    {
+        "type": "chrome",
+        "request": "launch",
+        "name": "Open index.html in Brave",
+        "url": "C:\\Users\\lizar\\OneDrive\\Escritorio\\UTN\\4° año\\Simu\\Simu\\index.html",
+        "runtimeExecutable": "C:\\Users\\lizar\\AppData\\Local\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+    }
+]
 }
