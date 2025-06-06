@@ -12,19 +12,17 @@ let madurosMacho = [];
 let huevos = [];
 
 const iniciar = async () => {
-  const nroF = document.getElementById("numberF").value;
-  const metodo = document.getElementById("typeF").value;
-
-  // Mostrar overlay
   document.getElementById("overlay").style.display = "flex";
 
-  try {
-    await simular(nroF, metodo); // asegurate de que `simular` devuelva una Promise
+  setTimeout(async () => {
+    var nroF = document.getElementById("numberF").value;
+    var metodo = document.getElementById("typeF").value;
+
+    await simular(nroF, metodo);  
     actualizar();
-  } finally {
-    // Ocultar overlay, pase lo que pase
+
     document.getElementById("overlay").style.display = "none";
-  }
+  }, 100); // le das al navegador 100ms para renderizar el overlay
 };
 
 const setCard=()=>{
@@ -50,8 +48,8 @@ const setCard=()=>{
       <h5>Informe del mes de ${dataCardM.mes}:</h5>
       <ul>
         <li>Temperatura promedio: ${Math.round(dataCardM.temperaturaPromedioMes)}</li>
-        <li>Humedad promedio ${Math.round(dataCardM.humedadPromedioMes)}</li>
-        <li>Picudos adultos reproductivos ${Math.round(dataCardM.picudosAdultosReproductivos)}</li>
+        <li>Humedad promedio: ${Math.round(dataCardM.humedadPromedioMes)}</li>
+        <li>Picudos adultos reproductivos: ${Math.round(dataCardM.picudosAdultosReproductivos)}</li>
       </ul>
     `;
   };

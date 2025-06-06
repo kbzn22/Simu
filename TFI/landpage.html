@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgroSim - Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    header {
+      background: linear-gradient(to right, #4e73df, #224abe);
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: slideInDown 1s ease-out;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      animation: fadeIn 2s ease-in;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      background-color: #1cc88a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    section {
+      padding: 80px 20px;
+      background-color: #f8f9fc;
+      color: #343a40;
+      text-align: center;
+    }
+
+    section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+      background-color: #e2e6ea;
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    @keyframes slideInDown {
+      0% { opacity: 0; transform: translateY(-50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      header p,
+      section p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <header>
+      <h1>Bienvenido a AgroSim</h1>
+      <p>Innovamos en tecnología para el agro. Simulá tu producción, analizá datos y tomá decisiones inteligentes para maximizar tus resultados.</p>
+      <a href="index.html" class="btn">Ir al simulador</a>
+    </header>
+
+    <section>
+      <h2>¿Por qué usar AgroSim?</h2>
+      <p>
+        Nuestro simulador permite modelar escenarios productivos, gestionar recursos eficientemente y prever resultados. Está diseñado para ingenieros agrónomos, productores y cooperativas que buscan optimizar cada hectárea.
+        Incluye análisis de costos, proyecciones climáticas y cálculos de rentabilidad. Todo en una plataforma intuitiva y ágil.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    &copy; 2025 AgroSim - Todos los derechos reservados
+  </footer>
+
+</body>
+</html>

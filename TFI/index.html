@@ -19,12 +19,18 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
 </head>
 
 <body id="page-top" style="padding: 30px;">
 
-        
+    <div id="overlay">
+  <div class="loader-container">
+    <div class="spinner"></div>
+    <div class="loader-text">Espere un momento...</div>
+  </div>
+</div>
     <!-- Page Wrapper -->
     <div id="wrapper">
         
@@ -251,7 +257,15 @@
         <!-- End of Content Wrapper -->
 
 </div>
-<script src="vendor/jquery/jquery.min.js"></script>
+<div id="overlay">
+        <div class="spinner">Espere un momento...</div>
+</div>
+
+
+    <!-- Page level custom scripts -->
+    
+</body>
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
@@ -262,12 +276,6 @@
 
     <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-     <div id="overlay">
-  <div class="spinner">Espere un momento...</div>
-</div>
-</body>
     <script src="js/simulador.js"></script>
     <script src="js/distributions.js"></script>
     <script src="js/demo/chart-area-demo.js"></script>
