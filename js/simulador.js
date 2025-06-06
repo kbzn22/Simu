@@ -313,8 +313,8 @@ const simular =async(nroF,metodo)=>{
   const ingresosTotales = 1300 * (AT-ATP)/1000; //pasamos a toneladas el algodon y multiplicamos por el precio por tonelada
   const costoPerdidaPicudo = 1300 * (ATP/1000);
 
-  arrayTorta[0] = ingresosTotales;
-  arrayTorta[1] = costoPerdidaPicudo; //que la torta diga 'Porcentaje de los ingresos perdidos por accion del picudo'
+  arrayTorta[0] = Math.round(ingresosTotales);
+  arrayTorta[1] = Math.round(costoPerdidaPicudo); //que la torta diga 'Porcentaje de los ingresos perdidos por accion del picudo'
   console.log(arrayTorta);
 
   const costoTotal = costoFijo + (costoVariable + costoPrevencion + costoFumigacion)*300;

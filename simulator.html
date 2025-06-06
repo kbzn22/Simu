@@ -54,7 +54,7 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">SimulAGRO</h1>
-                       <a href="landpage.html" class="btn btn-danger btn-icon-split">
+                       <a href="index.html" class="btn btn-danger btn-icon-split">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-arrow-left"></i>
                                         </span>
@@ -74,9 +74,16 @@
                                             <div class="text-xxl font-weight-bold text-primary text-uppercase mb-1">
                                                 Cantidad de fumigaciones</div>
                                             
-                                            <input style="width: 250px;" type="number" class="form-control form-control-user"
-                                                id="numberF" 
-                                                placeholder="Ingrese un numero">
+                                           <select style="width: 300px;" class="form-control form-control-user" id="numberF">
+                                                <option value="0">Elija numero de fumigaciones</option>
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -135,7 +142,7 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Picudos</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Picudo adultos generados por mes</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -155,7 +162,7 @@
 
                         <!-- Pie Chart -->
                         <div  class="col-xl-4 col-lg-5">
-                            <div style="height: 90%;" class="card shadow mb-4">
+                            <div style="height: 43vh;" class="card shadow mb-4">
                                 
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -177,7 +184,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body" id="informeMensual">
+                                <div class="card-body" style="font-size: 1.5rem;" id="informeMensual">
                                     Seleccione un mes
                                 </div>
                             </div>
@@ -206,13 +213,13 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Ingresos/Egresos</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Relacion Produccion/Daño</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                    
                                         </a>
-                                       
+                        
                                     </div>
                                 </div>
                                 <!-- Card Body -->
@@ -225,19 +232,19 @@
                                             <i class="fas fa-circle text-primary"></i> Ingresos
                                         </span>
                                         <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Egresos
+                                            <i class="fas fa-circle text-alert"></i> Daño economico producido por la plaga
                                         </span>
                                     
                                     </div>
                                 </div>
                             </div>
                         </div>
-                            <div  class="col-xl-4 col-lg-3">
+                            <div  class="col-xl-4 col-lg-3" style="height: 48vh;">
                                 <div style="height: 90%;" class="card shadow mb-4">
                                     <div class="card-header py-3">
                                         <h6 class="m-0 font-weight-bold text-primary">Informe general</h6>
                                     </div>
-                                <div class="card-body" id="informe">
+                                <div class="card-body" style="font-size: 1.5rem;" id="informe">
                                   Esperando simulacion...
                                 </div>
                             </div>
