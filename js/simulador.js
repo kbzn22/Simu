@@ -12,6 +12,8 @@ let madurosMacho = [];
 let huevos = [];
 
 const iniciar = async () => {
+  
+  generarNums();
   document.getElementById("overlay").style.display = "flex";
 
   setTimeout(async () => {
