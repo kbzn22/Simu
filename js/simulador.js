@@ -49,8 +49,8 @@ const setCard=()=>{
     document.getElementById("informeMensual").innerHTML = `
       <h5>Informe del mes de ${dataCardM.mes}:</h5>
       <ul>
-        <li>Temperatura promedio: ${Math.round(dataCardM.temperaturaPromedioMes)}</li>
-        <li>Humedad promedio: ${Math.round(dataCardM.humedadPromedioMes)}</li>
+        <li>Temperatura promedio: ${Math.round(dataCardM.temperaturaPromedioMes)}°C</li>
+        <li>Humedad promedio: ${Math.round(dataCardM.humedadPromedioMes)}%</li>
         <li>Picudos adultos reproductivos: ${Math.round(dataCardM.picudosAdultosReproductivos)}</li>
       </ul>
     `;
